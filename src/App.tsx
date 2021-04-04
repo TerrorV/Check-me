@@ -1,8 +1,13 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import ListItem from './ListItem';
+import { ListComponent } from './List.component';
+import SearchField from './SearchField';
 
 function App() {
+
+  var items:string[]=["asd","qwe","123"];
   return (
     <div className="App">
       <header className="App-header">
@@ -18,6 +23,9 @@ function App() {
         >
           Learn React
         </a>
+      <ListItem input="hhbvggg"/>
+      <SearchField listItems={items} />
+      <ListComponent listItems={items}></ListComponent>
       </header>
     </div>
   );
