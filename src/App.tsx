@@ -4,10 +4,12 @@ import './App.css';
 import ListItem from './ListItem';
 import { ListComponent } from './List.component';
 import SearchField from './SearchField';
+import { ListInput } from './ListInput';
 
 function App() {
 
   var items:string[]=["asd","qwe","123"];
+  //var input:ListInput= {listItems:items}
   return (
     <div className="App">
       <header className="App-header">

@@ -13,7 +13,7 @@ constructor(props: ListInput) {
     //this.setState(props);
 }
     render(){
-        var itemsList = this.state.listItems.map((i)=><ListItem input={i} />);
+        var itemsList = this.state.listItems.map((i)=><ListItem key={i.toString()} input={i} />);
         return itemsList;
     }
 }
