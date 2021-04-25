@@ -1,33 +1,26 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import ListItem from './ListItem';
-import { ListComponent } from './List.component';
-import SearchField from './SearchField';
-import { ListInput } from './ListInput';
+import { SearchField } from './SearchField';
 
 function App() {
 
-  var items:string[]=["asd","qwe","123"];
+  var items:string[]=["asd"];
+  // var items:string[]=["asd","qwe","123","asf","asdf","asdfg","afgh","1654","qw1"];
+  function ItemSelected(value:string) {
+    console.log(value);
+    if (!items.includes(value)){
+      items.push(value);
+    }
+  }
   //var input:ListInput= {listItems:items}
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      <ListItem input="hhbvggg"/>
-      <SearchField listItems={items} />
-      <ListComponent listItems={items}></ListComponent>
+      {/* <ListItem input="hhbvggg"/> */}
+      <SearchField listItems={items} onSelect={ItemSelected} />
+      {/* <ListComponent listItems={items}></ListComponent> */}
+      {/* <ListComponent listItems={items}></ListComponent> */}
       </header>
     </div>
   );

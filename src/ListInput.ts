@@ -1,7 +1,3 @@
-export class ListInput {
-    constructor() {
-        this.listItems = [];
-    }
-
-    public listItems:string[];    
+export interface ListInput {
+    listItems:string[];    
 }

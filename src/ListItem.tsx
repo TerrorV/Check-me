@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
 
-function ListItem(input:any) {
+function ListItem(input:any,evt:any) {
   return (
-    <div>
+    <div onClick={()=>{console.log(evt)}}>
       {input.input}
     </div>
   );
