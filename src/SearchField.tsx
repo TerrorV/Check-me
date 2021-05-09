@@ -5,7 +5,8 @@ import { SearchInput } from './SearchInput';
 
 type    SearchState = {
         searchTerm:string,
-        state:ListInput
+        state:ListInput,
+        showList:boolean
 }
 
 export class SearchField extends Component<SearchInput, SearchState> {
@@ -18,18 +19,19 @@ export class SearchField extends Component<SearchInput, SearchState> {
                 super(props);
                 this.state = {
                         searchTerm : "",
-                        state : props 
+                        state : props,
+                        showList:false
                 }
         }
 
         onChange = (e:React.FormEvent<HTMLInputElement>):void => {
                 var state: SearchState = {
                         searchTerm : e.currentTarget.value,
-                        state : this.state.state
+                        state : this.state.state,
+                        showList:this.state.showList
                 };
 
                 this.parent1.setState(state);
-
         }
 
         onKeyDown = (e:any):void=>{
@@ -38,7 +40,8 @@ export class SearchField extends Component<SearchInput, SearchState> {
                         this.props.onSelect(this.state.searchTerm);
                         var state: SearchState = {
                                 searchTerm : "",
-                                state : this.state.state
+                                state : this.state.state,
+                                showList:this.state.showList
                         };
         
                         this.parent1.setState(state);
@@ -46,21 +49,15 @@ export class SearchField extends Component<SearchInput, SearchState> {
                         searchBox.value="";
                         console.log(searchBox);
                 }
-
-        }
-
-        
+        }   
 
         // const SearchField:React.FC<ListInput>=({children,listItems})=> (
         render() {
                 return (<div>
-                        <input id="search-box" type="text" onChange={this.onChange} onKeyDown={this.onKeyDown}/>
+                        <input id="search-box" type="text" onChange={this.onChange} onKeyDown={this.onKeyDown} onFocus={()=>{this.setState({showList:true})}} />  
                         {
-                          
-                          this.state.state.listItems.filter(x=>x.includes(this.state.searchTerm)).map((i)=><ListItem key={i.toString()} input={i} />)
+                                this.state.showList?this.state.state.listItems.filter(x=>x.includes(this.state.searchTerm)).map((i)=><ListItem key={i.toString()} input={i} onClick={()=>{console.log("search click");this.props.onSelect(i);this.setState({showList:false})}} />): null
                         }
-
-                        {/* {this.state.state.listItems[0]} */}
                 </div>
                 );
         }

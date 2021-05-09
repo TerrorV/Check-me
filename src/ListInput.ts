@@ -1,3 +1,4 @@
 export interface ListInput {
-    listItems:string[];    
+    listItems:string[];  
+    onSelect:(value:string) =>void;
 }

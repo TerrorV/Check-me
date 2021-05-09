@@ -26,7 +26,7 @@ function App() {
       {/* <ListItem input="hhbvggg"/> */}
       <span style={style1}>
       {/* <SearchField listItems={items} onSelect={ItemSelected} /> */}
-      <MainComponent listItems={items} />
+      <MainComponent listItems={items} onSelect={()=>{}} />
       </span>
       {/* <ListComponent listItems={items}></ListComponent> */}
       {/* <ListComponent listItems={items}></ListComponent> */}
