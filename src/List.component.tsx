@@ -17,7 +17,7 @@ ItemClick=(e:any,value:string)=> {
     console.log(value);
 }
     render(){
-        var itemsList = this.state.listItems.map((i)=><ListItem key={i.toString()} input={i} onClick={this.ItemClick.bind(this,i)} />);
+        var itemsList = this.state.listItems.map((i)=><ListItem key={i} input={i} onClick={this.ItemClick.bind(this,i)} />);
         return itemsList;
     }
 }

@@ -1,10 +1,14 @@
 import React from 'react';
 import './App.css';
 
-function ListItem(input:any,evt:any) {
+function ListItem(props:any) {
+  var onClickMethod=props.onClick;
+  if  (onClickMethod===undefined){
+    onClickMethod=()=>{};
+  }
   return (
-    <div onClick={()=>{console.log(evt)}}>
-      {input.input}
+    <div onClick={()=>{onClickMethod(props.input)}}>
+      {props.input}
     </div>
   );
 }
