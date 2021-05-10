@@ -67,6 +67,9 @@ export class MainComponent extends Component<any, MainState> {
 
       {/* <ListItem input="hhbvggg"/> */}
       <ListComponent onSelect={this.RemoveItem} listItems={this.state.outstanding}></ListComponent>
+      <p style={mystyle}>
+
+      </p>
       <span style={mystyle}>
         <ListComponent onSelect={this.AddItem} listItems={this.state.done}></ListComponent>
       </span>
