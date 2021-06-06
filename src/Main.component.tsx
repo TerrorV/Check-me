@@ -69,7 +69,7 @@ export class MainComponent extends Component<any, MainState> {
     console.log(value);
   }
   render() {
-    const mystyle = { textDecoration: "line-through" };
+    //const mystyle = { textDecoration: "line-through" };
     return <span>
 
       <SearchField listItems={this.state.done} onSelect={this.ItemSelected} />
@@ -79,10 +79,10 @@ export class MainComponent extends Component<any, MainState> {
 
       {/* <ListItem input="hhbvggg"/> */}
       <ListComponent onSelect={this.RemoveItem} listItems={this.state.outstanding}></ListComponent>
-      <p style={mystyle}>
+      <p>
 
       </p>
-      <span style={mystyle}>
+      <span className="main__done" >
         <ListComponent onSelect={this.AddItem} listItems={this.state.done}></ListComponent>
       </span>
     </span>

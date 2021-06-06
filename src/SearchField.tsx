@@ -67,14 +67,14 @@ export class SearchField extends Component<SearchInput, SearchState> {
 
         // const SearchField:React.FC<ListInput>=({children,listItems})=> (
         render() {
-                const mystyle = { textDecoration: "line-through" };
+                // const mystyle = { textDecoration: "line-through" };
 
                 return (<div>
                         <input id="search-box" type="text" onChange={this.onChange} onKeyDown={this.onKeyDown} onFocus={()=>{}} onBlur={this.onBlure} />
-                        <span style={mystyle}>
+                        <span className="main__search">
                           
                         {
-                                this.state.showList?this.state.state.listItems.filter(x=>x.includes(this.state.searchTerm)).map((i)=><ListItem key={i.toString()} input={i} onClick={()=>{console.log("search click");this.props.onSelect(i);this.setState({showList:false})}} />): null
+                                this.state.showList?this.state.state.listItems.filter(x=>x.includes(this.state.searchTerm.toLowerCase())).map((i)=><ListItem key={i.toString()} input={i} onClick={()=>{console.log("search click");this.props.onSelect(i);this.setState({showList:false})}} />): null
                         }
                         </span>
                 </div>
