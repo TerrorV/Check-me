@@ -1,6 +1,7 @@
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+You can find the latest deployment at https://wonderful-water-06b7f1203.azurestaticapps.net/
 
 ## Available Scripts
 
