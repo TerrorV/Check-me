@@ -14,6 +14,7 @@ export class SearchField extends Component<SearchInput, SearchState> {
         /**
          *
          */
+
         public parent1:SearchField = this;
         constructor(props: SearchInput) {
                 super(props);
@@ -25,18 +26,28 @@ export class SearchField extends Component<SearchInput, SearchState> {
         }
 
         onChange = (e:React.FormEvent<HTMLInputElement>):void => {
+                console.log(e.currentTarget.value);
+                //this.setState({showList:})
+
                 var state: SearchState = {
                         searchTerm : e.currentTarget.value,
                         state : this.state.state,
-                        showList:this.state.showList
+                        showList:e.currentTarget.value !== ""
                 };
 
                 this.parent1.setState(state);
         }
 
-        onKeyDown = (e:any):void=>{
+        onBlure = (e:React.FormEvent<HTMLInputElement>):void => {
+                //var searchBox:HTMLInputElement = document.getElementById("search-box") as HTMLInputElement;
+
+                this.setState({showList:this.state.searchTerm !== ""})
+        }
+
+        onKeyDown = (e:React.KeyboardEvent):void=>{
                 console.log(e)
-                if (e.keyCode===13) {
+                console.log("Show list:" + this.state.showList)
+                if (e.key==="Enter") {
                         this.props.onSelect(this.state.searchTerm);
                         var state: SearchState = {
                                 searchTerm : "",
@@ -49,15 +60,23 @@ export class SearchField extends Component<SearchInput, SearchState> {
                         searchBox.value="";
                         console.log(searchBox);
                 }
+
+                console.log(this.state.searchTerm !== "");
+                //this.setState({showList:this.state.searchTerm !== ""})
         }   
 
         // const SearchField:React.FC<ListInput>=({children,listItems})=> (
         render() {
+                const mystyle = { textDecoration: "line-through" };
+
                 return (<div>
-                        <input id="search-box" type="text" onChange={this.onChange} onKeyDown={this.onKeyDown} onFocus={()=>{this.setState({showList:true})}} />  
+                        <input id="search-box" type="text" onChange={this.onChange} onKeyDown={this.onKeyDown} onFocus={()=>{}} onBlur={this.onBlure} />
+                        <span style={mystyle}>
+                          
                         {
                                 this.state.showList?this.state.state.listItems.filter(x=>x.includes(this.state.searchTerm)).map((i)=><ListItem key={i.toString()} input={i} onClick={()=>{console.log("search click");this.props.onSelect(i);this.setState({showList:false})}} />): null
                         }
+                        </span>
                 </div>
                 );
         }
