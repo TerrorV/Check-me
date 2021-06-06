@@ -15,8 +15,8 @@ export class MainComponent extends Component<any, MainState> {
     this.state1 = this.state;
 
     console.log(props);
-    var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "");
-    var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "");
+    var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding")?? "[]");
+    var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "[]");
     this.state = {
       done: done,
       outstanding: outstanding
