@@ -15,11 +15,15 @@ export class MainComponent extends Component<any, MainState> {
     this.state1 = this.state;
 
     console.log(props);
-    this.state = {done:[],
-    outstanding:[]};
+    var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "");
+    var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "");
+    this.state = {
+      done: done,
+      outstanding: outstanding
+    };
     this.ItemSelected = this.ItemSelected.bind(this);
-    this.AddItem=this.AddItem.bind(this);
-    this.RemoveItem=this.RemoveItem.bind(this);
+    this.AddItem = this.AddItem.bind(this);
+    this.RemoveItem = this.RemoveItem.bind(this);
     //this.setState(props);
   }
 
@@ -32,32 +36,40 @@ export class MainComponent extends Component<any, MainState> {
     this.AddItem(value);
   }
 
-  AddItem(value:string){
+  AddItem(value: string) {
     if (!this.state.outstanding.includes(value)) {
       this.state.outstanding.push(value);
     }
 
     if (this.state.done.includes(value)) {
-      this.state.done.splice(this.state.done.indexOf(value),1);
+      this.state.done.splice(this.state.done.indexOf(value), 1);
     }
+
+    this.PersistState(this.state);
 
     this.setState(this.state);
   }
 
-  RemoveItem(value:string){
-    const tempState:MainState = {outstanding:this.state.outstanding,done:this.state.done};
+  PersistState(appState: MainState): void {
+    localStorage.setItem("Outstanding", JSON.stringify(appState.outstanding));
+    localStorage.setItem("Done", JSON.stringify(appState.done));
+  }
+
+  RemoveItem(value: string) {
+    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done };
     if (!tempState.done.includes(value)) {
       tempState.done.push(value);
-      tempState.outstanding.splice(tempState.outstanding.indexOf(value),1);
+      tempState.outstanding.splice(tempState.outstanding.indexOf(value), 1);
       this.setState(tempState);
     }
+    this.PersistState(tempState);
   }
 
   ItemClick = (e: any, value: string) => {
     console.log(value);
   }
   render() {
-    const mystyle={textDecoration:"line-through"};
+    const mystyle = { textDecoration: "line-through" };
     return <span>
 
       <SearchField listItems={this.state.done} onSelect={this.ItemSelected} />
