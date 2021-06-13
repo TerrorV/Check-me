@@ -21,15 +21,16 @@ function App() {
   return (
     <div className="App">
       <header className="App-header" >
-        <span>
 
       {/* <ListItem input="hhbvggg"/> */}
-      <span style={style1}>
       {/* <SearchField listItems={items} onSelect={ItemSelected} /> */}
       <MainComponent listItems={items} onSelect={()=>{}} />
+      <span style={style1}>
+
       </span>
       {/* <ListComponent listItems={items}></ListComponent> */}
       {/* <ListComponent listItems={items}></ListComponent> */}
+      <span>
 
       {/* <ListItem input="hhbvggg"/> */}
       <span>

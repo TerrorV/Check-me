@@ -7,7 +7,7 @@ function ListItem(props:any) {
     onClickMethod=()=>{};
   }
   return (
-    <div onClick={()=>{onClickMethod(props.input)}}>
+    <div className="list-item" onClick={()=>{onClickMethod(props.input)}}>
       {props.input}
     </div>
   );
