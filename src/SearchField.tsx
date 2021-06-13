@@ -70,11 +70,11 @@ export class SearchField extends Component<SearchInput, SearchState> {
                 // const mystyle = { textDecoration: "line-through" };
 
                 return (<div>
-                        <input id="search-box" type="text" onChange={this.onChange} onKeyDown={this.onKeyDown} onFocus={()=>{}} onBlur={this.onBlure} />
+                        <input className="main__search_input" id="search-box" type="text" onChange={this.onChange} onKeyDown={this.onKeyDown} onFocus={()=>{}} onBlur={this.onBlure} />
                         <span className="main__search">
                           
                         {
-                                this.state.showList?this.state.state.listItems.filter(x=>x.includes(this.state.searchTerm.toLowerCase())).map((i)=><ListItem key={i.toString()} input={i} onClick={()=>{console.log("search click");this.props.onSelect(i);this.setState({showList:false})}} />): null
+                                this.state.showList?this.state.state.listItems.filter(x=>x.toLowerCase().includes(this.state.searchTerm.toLowerCase())).map((i)=><ListItem key={i.toString()} input={i} onClick={()=>{console.log("search click");this.props.onSelect(i);this.setState({showList:false})}} />): null
                         }
                         </span>
                 </div>

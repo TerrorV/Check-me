@@ -12,10 +12,28 @@ code {
     monospace;
 }
 
+.main{
+  width: 100%;
+}
 .main__done {
   text-decoration:line-through;
+  text-align: left;
+}
+
+.main__outstanding {
+  text-align: left;
 }
 
 .main__search{
   text-decoration:line-through;
+  width: 100%;
+  text-align: left;
+}
+.main__search_input{
+  width: 100%;
+}
+
+.list-item{
+  width: 100%;
+  height: 40px;
 }

@@ -14,6 +14,7 @@ export class MainComponent extends Component<any, MainState> {
     super(props);
     this.state1 = this.state;
 
+    // indexedDB.open()
     console.log(props);
     var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding")?? "[]");
     var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "[]");
@@ -70,21 +71,23 @@ export class MainComponent extends Component<any, MainState> {
   }
   render() {
     //const mystyle = { textDecoration: "line-through" };
-    return <span>
+    return <div className="main">
 
-      <SearchField listItems={this.state.done} onSelect={this.ItemSelected} />
-
+      <p></p>
       {/* <ListComponent listItems={items}></ListComponent> */}
       {/* <ListComponent listItems={items}></ListComponent> */}
 
       {/* <ListItem input="hhbvggg"/> */}
-      <ListComponent onSelect={this.RemoveItem} listItems={this.state.outstanding}></ListComponent>
+      <span className="main__outstanding">
+          <ListComponent onSelect={this.RemoveItem} listItems={this.state.outstanding}></ListComponent>
+      </span>
       <p>
+      <SearchField listItems={this.state.done} onSelect={this.ItemSelected} />
 
       </p>
       <span className="main__done" >
         <ListComponent onSelect={this.AddItem} listItems={this.state.done}></ListComponent>
       </span>
-    </span>
+    </div>
   }
 }
