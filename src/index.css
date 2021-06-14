@@ -13,7 +13,7 @@ code {
 }
 
 .main{
-  width: 100%;
+  width: 95%;
 }
 .main__done {
   text-decoration:line-through;
@@ -30,7 +30,7 @@ code {
   text-align: left;
 }
 .main__search_input{
-  width: 100%;
+  width: 97%;
 }
 
 .list-item{

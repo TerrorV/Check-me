@@ -5,4 +5,6 @@ export interface SearchInput {
     listItems:string[];
 
     onSelect:(value:string) =>void;
+    onOpen:() =>void;
+    onClose:() =>void;
 }
