@@ -16,15 +16,18 @@ export class MainComponent extends Component<any, MainState> {
 
     // indexedDB.open()
     console.log(props);
-    var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding")?? "[]");
+    var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "[]");
     var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "[]");
     this.state = {
       done: done,
-      outstanding: outstanding
+      outstanding: outstanding,
+      isDoneVisible: true
     };
     this.ItemSelected = this.ItemSelected.bind(this);
     this.AddItem = this.AddItem.bind(this);
     this.RemoveItem = this.RemoveItem.bind(this);
+    this.SearchOpened = this.SearchOpened.bind(this);
+    this.SearchClosed=this.SearchClosed.bind(this);
     //this.setState(props);
   }
 
@@ -34,7 +37,23 @@ export class MainComponent extends Component<any, MainState> {
     //   this.state.outstanding.push(value);
     //   this.setState(this.state);
     // }
+
     this.AddItem(value);
+    // var tempState: MainState = this.state;
+    // tempState.isVisibleDone = true;
+    // this.setState(tempState);
+  }
+
+  SearchClosed():void{
+    var tempState: MainState = this.state;
+    tempState.isDoneVisible = true;
+    this.setState(tempState);
+  }
+
+  SearchOpened(): void {
+    var tempState: MainState = this.state;
+    tempState.isDoneVisible = false;
+    this.setState(tempState);
   }
 
   AddItem(value: string) {
@@ -57,7 +76,7 @@ export class MainComponent extends Component<any, MainState> {
   }
 
   RemoveItem(value: string) {
-    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done };
+    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible };
     if (!tempState.done.includes(value)) {
       tempState.done.push(value);
       tempState.outstanding.splice(tempState.outstanding.indexOf(value), 1);
@@ -79,14 +98,16 @@ export class MainComponent extends Component<any, MainState> {
 
       {/* <ListItem input="hhbvggg"/> */}
       <span className="main__outstanding">
-          <ListComponent onSelect={this.RemoveItem} listItems={this.state.outstanding}></ListComponent>
+        <ListComponent onSelect={this.RemoveItem} listItems={this.state.outstanding}></ListComponent>
       </span>
       <p>
-      <SearchField listItems={this.state.done} onSelect={this.ItemSelected} />
-
+        <SearchField listItems={this.state.done} onSelect={this.ItemSelected} onClose={this.SearchClosed} onOpen={this.SearchOpened} />
       </p>
       <span className="main__done" >
-        <ListComponent onSelect={this.AddItem} listItems={this.state.done}></ListComponent>
+        {
+        this.state.isDoneVisible? <ListComponent onSelect={this.AddItem} listItems={this.state.done}></ListComponent>:null
+
+        } 
       </span>
     </div>
   }

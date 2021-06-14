@@ -35,6 +35,13 @@ export class SearchField extends Component<SearchInput, SearchState> {
                         showList:e.currentTarget.value !== ""
                 };
 
+                if(state.showList){
+                        this.props.onOpen();
+                }
+                else{
+                        this.props.onClose();
+                }
+
                 this.parent1.setState(state);
         }
 
@@ -42,6 +49,9 @@ export class SearchField extends Component<SearchInput, SearchState> {
                 //var searchBox:HTMLInputElement = document.getElementById("search-box") as HTMLInputElement;
 
                 this.setState({showList:this.state.searchTerm !== ""})
+                if(!this.state.showList){
+                        this.props.onClose();
+                }
         }
 
         onKeyDown = (e:React.KeyboardEvent):void=>{
@@ -49,6 +59,7 @@ export class SearchField extends Component<SearchInput, SearchState> {
                 console.log("Show list:" + this.state.showList)
                 if (e.key==="Enter") {
                         this.props.onSelect(this.state.searchTerm);
+                        this.props.onClose();
                         var state: SearchState = {
                                 searchTerm : "",
                                 state : this.state.state,
@@ -70,7 +81,9 @@ export class SearchField extends Component<SearchInput, SearchState> {
                 // const mystyle = { textDecoration: "line-through" };
 
                 return (<div>
+                        <div>
                         <input className="main__search_input" id="search-box" type="text" onChange={this.onChange} onKeyDown={this.onKeyDown} onFocus={()=>{}} onBlur={this.onBlure} />
+                        </div>
                         <span className="main__search">
                           
                         {
