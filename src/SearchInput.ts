@@ -2,9 +2,9 @@
 
 export interface SearchInput {
 
-    listItems:string[];
+    listItems: string[];
 
-    onSelect:(value:string) =>void;
-    onOpen:() =>void;
-    onClose:() =>void;
+    onSelect: (value: string) => void;
+    onOpen: () => void;
+    onClose: () => void;
 }

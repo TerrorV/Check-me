@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { ListInput } from './ListInput';
 import ListItem from './ListItem';
 import { SearchInput } from './SearchInput';
 
 type    SearchState = {
         searchTerm:string,
-        state:ListInput,
+        state:SearchInput,
         showList:boolean
 }
 

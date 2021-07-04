@@ -13,16 +13,28 @@ export class ListComponent extends Component<ListInput, ListInput> {
         if (this.props.onSelect === undefined) {
             tempState.onSelect = () => { };
         }
+        
+        if (this.props.onEdit === undefined) {
+            tempState.onEdit = () => { };
+        }
+        
+        this.ItemEdit= this.ItemEdit.bind(this);
+        this.ItemClick = this.ItemClick.bind(this);
         this.state = tempState;
         //this.setState(props);
     }
 
-    ItemClick = (e: any, value: string) => {
+    ItemClick = (value: string) => {
         console.log(value);
         this.state.onSelect(value);
     }
+
+    ItemEdit = (e:any, value:string) =>{
+        this.state.onEdit(value);
+    }
+
     render() {
-        var itemsList = this.state.listItems.map((i) => <ListItem key={i} input={i} onClick={this.ItemClick.bind(this, i)} />);
+        var itemsList = this.state.listItems.map((i) => <span className="list_component__item" ><ListItem key={i} input={i} onClick={()=>{this.ItemClick(i)}} /><div onClick={(e)=>{console.log(e); this.ItemEdit(e,i)}} className="list_component__button">D</div></span> );
         return itemsList;
     }
 }
