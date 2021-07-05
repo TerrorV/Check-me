@@ -1,5 +1,6 @@
-import { Component, MouseEventHandler } from "react";
+import { Component } from "react";
 import { EditItemState } from "./EditItemState";
+import { CloseRounded, DeleteRounded, DoneRounded } from "@material-ui/icons";
 
 export class EditItemComponent extends Component<EditItemState, EditItemState> {
     constructor(props: EditItemState) {
@@ -60,9 +61,9 @@ export class EditItemComponent extends Component<EditItemState, EditItemState> {
     render() {
         return (
             <span>
-                <div>asdlkj</div>
+                <div>{this.props.value}</div>
                 <input className="list__edit_input" id="edit-value-box" type="text" value={this.state.value} onChange={this.onChange} onKeyDown={this.onKeyDown} />
-                <div><span onClick={()=>this.UpdateItem(this.state.value)} >OK</span><span onClick={()=>this.DeleteItem()}>Delete</span><span onClick={()=>this.CancelItem()}>Cancel</span> </div>
+                <div><span onClick={()=>this.UpdateItem(this.state.value)} ><DoneRounded/></span><span onClick={()=>this.DeleteItem()}><DeleteRounded /></span><span onClick={()=>this.CancelItem()}><CloseRounded /></span> </div>
             </span>
         );
     }
