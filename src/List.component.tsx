@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ListItem from "./ListItem";
 import { ListInput } from "./ListInput";
+import { EditRounded } from "@material-ui/icons";
 
 export class ListComponent extends Component<ListInput, ListInput> {
     /**
@@ -34,7 +35,7 @@ export class ListComponent extends Component<ListInput, ListInput> {
     }
 
     render() {
-        var itemsList = this.state.listItems.map((i) => <span className="list_component__item" ><ListItem key={i} input={i} onClick={()=>{this.ItemClick(i)}} /><div onClick={(e)=>{console.log(e); this.ItemEdit(e,i)}} className="list_component__button">D</div></span> );
+        var itemsList = this.state.listItems.map((i) => <span className="list_component__item" ><ListItem key={i} input={i} onClick={()=>{this.ItemClick(i)}} /><div onClick={(e)=>{console.log(e); this.ItemEdit(e,i)}} className="list_component__button"><EditRounded /></div></span> );
         return itemsList;
     }
 }
