@@ -60,10 +60,10 @@ export class EditItemComponent extends Component<EditItemState, EditItemState> {
 
     render() {
         return (
-            <span>
+            <span className="edititem" >
                 <div>{this.props.value}</div>
-                <input className="list__edit_input" id="edit-value-box" type="text" value={this.state.value} onChange={this.onChange} onKeyDown={this.onKeyDown} />
-                <div><span onClick={()=>this.UpdateItem(this.state.value)} ><DoneRounded/></span><span onClick={()=>this.DeleteItem()}><DeleteRounded /></span><span onClick={()=>this.CancelItem()}><CloseRounded /></span> </div>
+                <input className="edititem__input" id="edit-value-box" type="text" value={this.state.value} onChange={this.onChange} onKeyDown={this.onKeyDown} />
+                <div className="edititem__buttons__row"><span className="edititem__button"  onClick={()=>this.UpdateItem(this.state.value)} ><DoneRounded/></span><span className="edititem__button" onClick={()=>this.DeleteItem()}><DeleteRounded /></span><span className="edititem__button" onClick={()=>this.CancelItem()}><CloseRounded /></span> </div>
             </span>
         );
     }
