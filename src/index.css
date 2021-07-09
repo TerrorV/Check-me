@@ -53,3 +53,25 @@ code {
   float: right;
   width: 10%;
 }
+
+.edititem__button{
+  display: inline-table;
+  position: relative;
+  width: 15%;
+  /* height: 130px; */
+}
+
+.edititem__buttons__row{
+  position: absolute;
+  bottom: 0;
+  align-content: center;
+  width: 95%;
+}
+
+.edititem{
+  width: 97%;
+}
+
+.edititem__input{
+  width: 95%;
+}
