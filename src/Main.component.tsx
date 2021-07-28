@@ -4,6 +4,7 @@ import { SearchField } from "./SearchField";
 import { ListComponent } from "./List.component";
 import { MainState } from "./MainState";
 import { EditItemComponent } from "./EditItem.component";
+import { CheckList, Configuration, ItemsApi, ListsApi } from "./dal";
 
 export class MainComponent extends Component<any, MainState> {
   /**
@@ -13,16 +14,36 @@ export class MainComponent extends Component<any, MainState> {
   private state1: MainState;
   constructor(props: ListInput) {
     super(props);
+
     this.state1 = this.state;
     // indexedDB.open()
     console.log(props);
     var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "[]");
     var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "[]");
+    var listId: string = localStorage.getItem("listId") ?? "";
+    var listRepo = new ListsApi();
+    if (listId === "") {
+      this.CreateNewList("00000000-0000-0000-0000-000000000000",outstanding,done);
+      // // listRepo.listsCreateList({ outstanding: outstanding, done: done, id: "00000000-0000-0000-0000-000000000000" }).then(x=>{
+      // //   var tempState = {
+      // //     done: done,
+      // //     outstanding: outstanding,
+      // //     isDoneVisible: true,
+      // //     currentValue: "",
+      // //     listId: x.id
+      // //   };
+      // //   this.setState(tempState);
+      // //   this.PersistState(tempState);});
+    } else{
+      listRepo.listsGetList(listId).then(x=>this.LoadList(x)).catch(e=>this.CreateNewList(listId,outstanding,done));
+    }
+
     this.state = {
       done: done,
       outstanding: outstanding,
       isDoneVisible: true,
-      currentValue: ""
+      currentValue: "",
+      listId: listId
     };
     this.ItemSelected = this.ItemSelected.bind(this);
     this.AddItem = this.AddItem.bind(this);
@@ -33,6 +54,9 @@ export class MainComponent extends Component<any, MainState> {
     this.DeleteItem = this.DeleteItem.bind(this);
     this.CancelEdit = this.CancelEdit.bind(this);
     this.UpdateItem = this.UpdateItem.bind(this);
+    this.CreateNewList = this.CreateNewList.bind(this);
+    this.LoadList = this.LoadList.bind(this);
+
     //this.setState(props);
   }
 
@@ -71,13 +95,16 @@ export class MainComponent extends Component<any, MainState> {
       this.state.done.splice(this.state.done.indexOf(value), 1);
     }
 
+    var itemRepo = new ItemsApi();
+    itemRepo.itemsUpdateItem(1, this.state.listId, value);
+
     this.PersistState(this.state);
 
     this.setState(this.state);
   }
 
-  UpdateItem(oldValue: string,newValue: string) {
-    console.log(oldValue +"|"+ newValue)
+  UpdateItem(oldValue: string, newValue: string) {
+    console.log(oldValue + "|" + newValue)
     if (this.state.outstanding.includes(oldValue)) {
       this.state.outstanding[this.state.outstanding.indexOf(oldValue)] = newValue;
     }
@@ -86,6 +113,8 @@ export class MainComponent extends Component<any, MainState> {
       this.state.done[this.state.done.indexOf(oldValue)] = newValue;
     }
 
+    var itemRepo = new ItemsApi();
+    itemRepo.itemsEditItem(newValue, this.state.listId, oldValue)
     this.PersistState(this.state);
 
     this.setState(this.state);
@@ -93,39 +122,45 @@ export class MainComponent extends Component<any, MainState> {
     this.CancelEdit();
   }
 
-  CancelEdit():void{
-    this.state ={
-      currentValue:"",
-      done:this.state.done,
-      outstanding:this.state.outstanding,
-      isDoneVisible:this.state.isDoneVisible
+  CancelEdit(): void {
+    this.state = {
+      currentValue: "",
+      done: this.state.done,
+      outstanding: this.state.outstanding,
+      isDoneVisible: this.state.isDoneVisible,
+      listId: this.state.listId
     }
 
     this.setState(this.state);
   }
 
   PersistState(appState: MainState): void {
+    console.log(appState);
     localStorage.setItem("Outstanding", JSON.stringify(appState.outstanding));
     localStorage.setItem("Done", JSON.stringify(appState.done));
+    localStorage.setItem("listId",appState.listId);
   }
 
   RemoveItem(value: string) {
     console.log("remove");
-    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: this.state.currentValue };
+    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: this.state.currentValue, listId: this.state.listId };
     if (!tempState.done.includes(value)) {
       tempState.done.push(value);
       tempState.outstanding.splice(tempState.outstanding.indexOf(value), 1);
       this.setState(tempState);
     }
 
+    var itemRepo = new ItemsApi();
+    itemRepo.itemsUpdateItem(2, this.state.listId, value).catch(e=>console.log(e));
+
     this.PersistState(tempState);
   }
 
-  DeleteItem(value:string){
-    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: this.state.currentValue };
+  DeleteItem(value: string) {
+    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: this.state.currentValue, listId: this.state.listId };
     if (tempState.outstanding.includes(value)) {
       tempState.outstanding.splice(tempState.outstanding.indexOf(value), 1);
-    }else{
+    } else {
       tempState.done.splice(tempState.done.indexOf(value), 1);
     }
 
@@ -136,14 +171,43 @@ export class MainComponent extends Component<any, MainState> {
   }
 
   EditItem(value: string) {
-  console.log(value);
-    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: value };
+    console.log(value);
+    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: value, listId: this.state.listId };
     this.setState(tempState);
   }
 
   ItemClick = (e: any, value: string) => {
     console.log(value);
   }
+
+  LoadList(list: CheckList): any {
+    var tempState: MainState =  {
+          done: list.done ?? [],
+          outstanding: list.outstanding ?? [],
+          isDoneVisible: true,
+          currentValue: "",
+          listId: list.id
+        };
+
+        this.setState(tempState);
+        this.PersistState(tempState);
+  }
+  
+  CreateNewList(listId: string, outstanding: string[], done: string[]): any {
+    var listRepo = new ListsApi();
+    listRepo.listsCreateList({ outstanding: outstanding, done: done, id: listId }).then(x=>{
+      var tempState = {
+        done: done,
+        outstanding: outstanding,
+        isDoneVisible: true,
+        currentValue: "",
+        listId: x.id
+      };
+      this.setState(tempState);
+      this.PersistState(tempState);});
+      // throw new Error("Function not implemented.");
+  }
+  
   render() {
     //const mystyle = { textDecoration: "line-through" };
     return <div className="main">
@@ -154,7 +218,7 @@ export class MainComponent extends Component<any, MainState> {
       <span>
         {
           this.state.currentValue !== "" &&
-          <EditItemComponent value={this.state.currentValue} onCancel={() => this.CancelEdit()} onDelete={() => this.DeleteItem(this.state.currentValue)} onUpdate={(newValue) => this.UpdateItem(this.state.currentValue,newValue)} ></EditItemComponent>
+          <EditItemComponent value={this.state.currentValue} onCancel={() => this.CancelEdit()} onDelete={() => this.DeleteItem(this.state.currentValue)} onUpdate={(newValue) => this.UpdateItem(this.state.currentValue, newValue)} ></EditItemComponent>
 
         }
       </span>
@@ -179,3 +243,5 @@ export class MainComponent extends Component<any, MainState> {
     </div>
   }
 }
+
+
