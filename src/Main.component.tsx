@@ -12,39 +12,11 @@ export class MainComponent extends Component<any, MainState> {
    */
 
   private state1: MainState;
+  private listsRepo: ListsApi;
+  private itemsRepo: ItemsApi;
   constructor(props: ListInput) {
     super(props);
 
-    this.state1 = this.state;
-    // indexedDB.open()
-    console.log(props);
-    var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "[]");
-    var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "[]");
-    var listId: string = localStorage.getItem("listId") ?? "";
-    var listRepo = new ListsApi();
-    if (listId === "") {
-      this.CreateNewList("00000000-0000-0000-0000-000000000000",outstanding,done);
-      // // listRepo.listsCreateList({ outstanding: outstanding, done: done, id: "00000000-0000-0000-0000-000000000000" }).then(x=>{
-      // //   var tempState = {
-      // //     done: done,
-      // //     outstanding: outstanding,
-      // //     isDoneVisible: true,
-      // //     currentValue: "",
-      // //     listId: x.id
-      // //   };
-      // //   this.setState(tempState);
-      // //   this.PersistState(tempState);});
-    } else{
-      listRepo.listsGetList(listId).then(x=>this.LoadList(x)).catch(e=>this.CreateNewList(listId,outstanding,done));
-    }
-
-    this.state = {
-      done: done,
-      outstanding: outstanding,
-      isDoneVisible: true,
-      currentValue: "",
-      listId: listId
-    };
     this.ItemSelected = this.ItemSelected.bind(this);
     this.AddItem = this.AddItem.bind(this);
     this.RemoveItem = this.RemoveItem.bind(this);
@@ -56,6 +28,30 @@ export class MainComponent extends Component<any, MainState> {
     this.UpdateItem = this.UpdateItem.bind(this);
     this.CreateNewList = this.CreateNewList.bind(this);
     this.LoadList = this.LoadList.bind(this);
+    this.RefreshList = this.RefreshList.bind(this);
+    this.state1 = this.state;
+    this.listsRepo = new ListsApi();
+    this.itemsRepo = new ItemsApi();
+    // indexedDB.open()
+    console.log(props);
+    var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "[]");
+    var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "[]");
+    var listId: string = localStorage.getItem("listId") ?? "";
+    // var listRepo = new ListsApi();
+    if (listId === "") {
+      this.CreateNewList("00000000-0000-0000-0000-000000000000", outstanding, done);
+    } else {
+      this.listsRepo.listsGetList(listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(listId, outstanding, done));
+    }
+
+    this.state = {
+      done: done,
+      outstanding: outstanding,
+      isDoneVisible: true,
+      currentValue: "",
+      listId: listId
+    };
+
 
     //this.setState(props);
   }
@@ -90,17 +86,24 @@ export class MainComponent extends Component<any, MainState> {
     if (!this.state.outstanding.includes(value)) {
       this.state.outstanding.push(value);
     }
-
+    
     if (this.state.done.includes(value)) {
       this.state.done.splice(this.state.done.indexOf(value), 1);
     }
-
-    var itemRepo = new ItemsApi();
-    itemRepo.itemsUpdateItem(1, this.state.listId, value);
+    
+    this.RefreshList(this.state.listId);
+    // var itemRepo = new ItemsApi();
+    this.itemsRepo.itemsUpdateItem(1, this.state.listId, value);
 
     this.PersistState(this.state);
 
     this.setState(this.state);
+  }
+
+  RefreshList(listId: string) {
+    //  var listRepo = new ListsApi()
+    this.listsRepo.listsGetList(listId).then(x => this.LoadList(x));
+    // throw new Error("Method not implemented.");
   }
 
   UpdateItem(oldValue: string, newValue: string) {
@@ -113,8 +116,9 @@ export class MainComponent extends Component<any, MainState> {
       this.state.done[this.state.done.indexOf(oldValue)] = newValue;
     }
 
-    var itemRepo = new ItemsApi();
-    itemRepo.itemsEditItem(newValue, this.state.listId, oldValue)
+    this.RefreshList(this.state.listId);
+    // var itemRepo = new ItemsApi();
+    this.itemsRepo.itemsEditItem(newValue, this.state.listId, oldValue)
     this.PersistState(this.state);
 
     this.setState(this.state);
@@ -138,7 +142,7 @@ export class MainComponent extends Component<any, MainState> {
     console.log(appState);
     localStorage.setItem("Outstanding", JSON.stringify(appState.outstanding));
     localStorage.setItem("Done", JSON.stringify(appState.done));
-    localStorage.setItem("listId",appState.listId);
+    localStorage.setItem("listId", appState.listId);
   }
 
   RemoveItem(value: string) {
@@ -150,8 +154,8 @@ export class MainComponent extends Component<any, MainState> {
       this.setState(tempState);
     }
 
-    var itemRepo = new ItemsApi();
-    itemRepo.itemsUpdateItem(2, this.state.listId, value).catch(e=>console.log(e));
+    this.RefreshList(this.state.listId);
+    this.itemsRepo.itemsUpdateItem(2, this.state.listId, value).catch(e => console.log(e));
 
     this.PersistState(tempState);
   }
@@ -164,6 +168,8 @@ export class MainComponent extends Component<any, MainState> {
       tempState.done.splice(tempState.done.indexOf(value), 1);
     }
 
+    this.RefreshList(this.state.listId);
+    this.itemsRepo.itemsRemoveItem(this.state.listId,value);
     this.setState(tempState);
 
     this.PersistState(tempState);
@@ -181,21 +187,21 @@ export class MainComponent extends Component<any, MainState> {
   }
 
   LoadList(list: CheckList): any {
-    var tempState: MainState =  {
-          done: list.done ?? [],
-          outstanding: list.outstanding ?? [],
-          isDoneVisible: true,
-          currentValue: "",
-          listId: list.id
-        };
+    var tempState: MainState = {
+      done: list.done ?? [],
+      outstanding: list.outstanding ?? [],
+      isDoneVisible: true,
+      currentValue: "",
+      listId: list.id
+    };
 
-        this.setState(tempState);
-        this.PersistState(tempState);
+    this.setState(tempState);
+    this.PersistState(tempState);
   }
-  
+
   CreateNewList(listId: string, outstanding: string[], done: string[]): any {
     var listRepo = new ListsApi();
-    listRepo.listsCreateList({ outstanding: outstanding, done: done, id: listId }).then(x=>{
+    listRepo.listsCreateList({ outstanding: outstanding, done: done, id: listId }).then(x => {
       var tempState = {
         done: done,
         outstanding: outstanding,
@@ -204,10 +210,11 @@ export class MainComponent extends Component<any, MainState> {
         listId: x.id
       };
       this.setState(tempState);
-      this.PersistState(tempState);});
-      // throw new Error("Function not implemented.");
+      this.PersistState(tempState);
+    });
+    // throw new Error("Function not implemented.");
   }
-  
+
   render() {
     //const mystyle = { textDecoration: "line-through" };
     return <div className="main">
