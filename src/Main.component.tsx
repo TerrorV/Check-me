@@ -30,8 +30,15 @@ export class MainComponent extends Component<any, MainState> {
     this.LoadList = this.LoadList.bind(this);
     this.RefreshList = this.RefreshList.bind(this);
     this.state1 = this.state;
-    this.listsRepo = new ListsApi();
-    this.itemsRepo = new ItemsApi();
+    console.log( process.env.NODE_ENV);
+    console.log(process.env.PUBLIC_URL);
+    console.log(process.env.API_HOST);
+    console.log(process.env.REACT_APP_API_HOST);
+
+    var config = new Configuration();
+    config.basePath=process.env.REACT_APP_API_HOST;
+    this.listsRepo = new ListsApi(config);
+    this.itemsRepo = new ItemsApi(config);
     // indexedDB.open()
     console.log(props);
     var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "[]");
