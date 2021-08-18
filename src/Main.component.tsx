@@ -207,8 +207,8 @@ export class MainComponent extends Component<any, MainState> {
   }
 
   CreateNewList(listId: string, outstanding: string[], done: string[]): any {
-    var listRepo = new ListsApi();
-    listRepo.listsCreateList({ outstanding: outstanding, done: done, id: listId }).then(x => {
+    // var listRepo = new ListsApi();
+    this.listsRepo.listsCreateList({ outstanding: outstanding, done: done, id: listId }).then(x => {
       var tempState = {
         done: done,
         outstanding: outstanding,
