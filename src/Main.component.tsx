@@ -30,15 +30,15 @@ export class MainComponent extends Component<any, MainState> {
     this.LoadList = this.LoadList.bind(this);
     this.RefreshList = this.RefreshList.bind(this);
     this.state1 = this.state;
-    console.log( process.env.NODE_ENV);
+    console.log(process.env.NODE_ENV);
     console.log(process.env.PUBLIC_URL);
     console.log(process.env.API_HOST);
     console.log(process.env.REACT_APP_API_HOST);
 
     var config = new Configuration();
-    config.basePath=process.env.REACT_APP_API_HOST;
-    this.listsRepo = new ListsApi(config);
-    this.itemsRepo = new ItemsApi(config);
+    config.basePath = process.env.REACT_APP_API_HOST;
+    this.listsRepo = new ListsApi(config, config.basePath);
+    this.itemsRepo = new ItemsApi(config, config.basePath);
     // indexedDB.open()
     console.log(props);
     var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "[]");
@@ -93,11 +93,11 @@ export class MainComponent extends Component<any, MainState> {
     if (!this.state.outstanding.includes(value)) {
       this.state.outstanding.push(value);
     }
-    
+
     if (this.state.done.includes(value)) {
       this.state.done.splice(this.state.done.indexOf(value), 1);
     }
-    
+
     this.RefreshList(this.state.listId);
     // var itemRepo = new ItemsApi();
     this.itemsRepo.itemsUpdateItem(1, this.state.listId, value);
@@ -176,7 +176,7 @@ export class MainComponent extends Component<any, MainState> {
     }
 
     this.RefreshList(this.state.listId);
-    this.itemsRepo.itemsRemoveItem(this.state.listId,value);
+    this.itemsRepo.itemsRemoveItem(this.state.listId, value);
     this.setState(tempState);
 
     this.PersistState(tempState);
