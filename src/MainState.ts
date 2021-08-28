@@ -4,4 +4,5 @@ export interface MainState {
         done:string[];
         isDoneVisible: boolean;
         currentValue:string;
+        showOpenList: boolean;
     }
