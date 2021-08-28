@@ -1,15 +1,20 @@
-import { CloseRounded, DeleteRounded, DoneRounded } from '@material-ui/icons';
+import { AddCircleRounded, CloseRounded, CloudDownload, DeleteRounded, DoneRounded, PostAddRounded, SyncRounded } from '@material-ui/icons';
 import React from 'react';
 import './App.css';
+import { MainControlsState } from './MainControlsState';
 
-function MainControls(props:any) {
+function MainControls(props:MainControlsState) {
 //   var onClickMethod=props.onClick;
 //   if  (onClickMethod===undefined){
 //     onClickMethod=()=>{};
 //   }
 
   return (
-    <div className="edititem__buttons__row"><span className="edititem__button"  onClick={()=>console.log("button 1")} ><DoneRounded/></span><span className="edititem__button" onClick={()=>console.log("button 2")}><DeleteRounded /></span><span className="edititem__button" onClick={()=>console.log("button 3")}><CloseRounded /></span> </div>
+    <div className="main__buttons__row">
+      <span className="main__button"  onClick={props.onAddExisting} ><CloudDownload/></span>
+      <span className="main__button" onClick={props.onSync}><SyncRounded /></span>
+      <span className="main__button" onClick={props.onNew}><AddCircleRounded /></span>
+      <span className="main__button" onClick={props.onDelete}><DeleteRounded /></span> </div>
   );
 }
 

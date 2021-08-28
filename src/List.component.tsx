@@ -21,7 +21,9 @@ export class ListComponent extends Component<ListInput, ListInput> {
         
         this.ItemEdit= this.ItemEdit.bind(this);
         this.ItemClick = this.ItemClick.bind(this);
+
         this.state = tempState;
+
         //this.setState(props);
     }
 
@@ -35,7 +37,7 @@ export class ListComponent extends Component<ListInput, ListInput> {
     }
 
     render() {
-        var itemsList = this.state.listItems.map((i) => <span className="list_component__item" ><ListItem key={i} input={i} onClick={()=>{this.ItemClick(i)}} /><div onClick={(e)=>{console.log(e); this.ItemEdit(e,i)}} className="list_component__button"><EditRounded /></div></span> );
+        var itemsList = (this.state.reverse?this.state.listItems.reverse():this.state.listItems).map((i) => <span className="list_component__item" ><ListItem key={i} input={i} onClick={()=>{this.ItemClick(i)}} /><div onClick={(e)=>{console.log(e); this.ItemEdit(e,i)}} className="list_component__button"><EditRounded /></div></span> );
         return itemsList;
     }
 }
