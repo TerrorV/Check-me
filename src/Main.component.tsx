@@ -116,7 +116,8 @@ export class MainComponent extends Component<any, MainState> {
 
     this.setState(this.state);
     this.PersistState(this.state);
-    this.itemsRepo.itemsUpdateItem(1, this.state.listId, value).
+    // this.itemsRepo.itemsUpdateItem(1, this.state.listId, value).
+    this.itemsRepo.itemsAddItem(value,this.state.listId).
     then(x => this.RefreshList(this.state.listId)).
     catch(x=>this.itemsRepo.itemsAddItem(value,this.state.listId).
     then(x => this.RefreshList(this.state.listId)));
