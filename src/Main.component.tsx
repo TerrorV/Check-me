@@ -8,6 +8,7 @@ import { CheckList, Configuration, ItemsApi, ListsApi } from "./dal";
 import { couldStartTrivia } from "typescript";
 import MainControls from "./MainControls.component";
 import { AddListComponent } from "./AddList.component";
+import { initSampleWorker } from "./useSampleWorker";
 
 export class MainComponent extends Component<any, MainState> {
   /**
@@ -17,6 +18,7 @@ export class MainComponent extends Component<any, MainState> {
   private state1: MainState;
   private listsRepo: ListsApi;
   private itemsRepo: ItemsApi;
+
   constructor(props: ListInput) {
     super(props);
 
@@ -62,18 +64,27 @@ export class MainComponent extends Component<any, MainState> {
       showOpenList: false
     };
 
+    // this.worker = new Worker(new URL("./worker/ApiSyncWorker",import.meta.url));
 
     //this.setState(props);
   }
 
   componentDidMount() {
+
     console.log("Did mount");
     if (this.state.listId === "") {
       this.CreateNewList("00000000-0000-0000-0000-000000000000", this.state.outstanding, this.state.done);
     } else {
       this.listsRepo.listsGetList(this.state.listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
       //this.listsRepo.listsGetList(this.state.listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
+
     }
+
+    var  sampleWorker = initSampleWorker();
+    // sampleWorker.syncList(this.state.listId,this.listsRepo,this.LoadList).catch(e=>console.log(e));
+    sampleWorker.syncList(this.state.listId).catch(e=>console.log(e));
+
+    // this.worker.postMessage("asdasd message1");
 
   }
 
