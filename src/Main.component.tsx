@@ -17,6 +17,9 @@ export class MainComponent extends Component<any, MainState> {
   private state1: MainState;
   private listsRepo: ListsApi;
   private itemsRepo: ItemsApi;
+  private eventHandler: EventSource;
+
+
   constructor(props: ListInput) {
     super(props);
 
@@ -35,7 +38,9 @@ export class MainComponent extends Component<any, MainState> {
     this.ShowAddListDialogue = this.ShowAddListDialogue.bind(this);
     this.HideAddListDialogue = this.HideAddListDialogue.bind(this);
     this.LoadRemoteList = this.LoadRemoteList.bind(this);
-    this.DeleteCurrentList=this.DeleteCurrentList.bind(this);
+    this.DeleteCurrentList = this.DeleteCurrentList.bind(this);
+    this.HandleMessage=this.HandleMessage.bind(this);
+    this.HandleError=this.HandleError.bind(this);
     this.state1 = this.state;
     console.log(process.env.NODE_ENV);
     console.log(process.env.PUBLIC_URL);
@@ -47,11 +52,13 @@ export class MainComponent extends Component<any, MainState> {
     this.listsRepo = new ListsApi(config, config.basePath);
     this.itemsRepo = new ItemsApi(config, config.basePath);
     // indexedDB.open()
+    console.log(config);
     console.log(props);
     var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "[]");
     var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "[]");
     var listId: string = localStorage.getItem("listId") ?? "";
     // var listRepo = new ListsApi();
+    this.eventHandler = new EventSource("");
 
     this.state = {
       done: done,
@@ -62,21 +69,40 @@ export class MainComponent extends Component<any, MainState> {
       showOpenList: false
     };
 
-
     //this.setState(props);
   }
 
   componentDidMount() {
+
     console.log("Did mount");
     if (this.state.listId === "") {
       this.CreateNewList("00000000-0000-0000-0000-000000000000", this.state.outstanding, this.state.done);
     } else {
       this.listsRepo.listsGetList(this.state.listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
       //this.listsRepo.listsGetList(this.state.listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
+
     }
 
+    try {
+      this.eventHandler = this.listsRepo.listsSubscribeToList(this.state.listId, this.HandleMessage, this.HandleError);
+    } catch (error) {
+      console.log("SSE ERROR!!!");
+      console.log(error);
+    }
   }
 
+  HandleMessage(message: any): void {
+    if (message.data == 'ping') {
+      return;
+    }
+
+    this.LoadList(JSON.parse(message.data));
+    console.log(message.data);
+  }
+
+  HandleError(message: any): void {
+    console.log(message);
+  }
 
   ItemSelected(value: string) {
     console.log(value);
@@ -117,10 +143,10 @@ export class MainComponent extends Component<any, MainState> {
     this.setState(this.state);
     this.PersistState(this.state);
     // this.itemsRepo.itemsUpdateItem(1, this.state.listId, value).
-    this.itemsRepo.itemsAddItem(value,this.state.listId).
-    then(x => this.RefreshList(this.state.listId)).
-    catch(x=>this.itemsRepo.itemsAddItem(value,this.state.listId).
-    then(x => this.RefreshList(this.state.listId)));
+    this.itemsRepo.itemsAddItem(value, this.state.listId).
+      then(x => this.RefreshList(this.state.listId)).
+      catch(x => this.itemsRepo.itemsUpdateItem(1, this.state.listId, value).
+        then(x => this.RefreshList(this.state.listId)));
     // var itemRepo = new ItemsApi();
 
 
@@ -278,14 +304,14 @@ export class MainComponent extends Component<any, MainState> {
     //this.listsRepo.listsGetList(this.state.listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
   }
 
-  DeleteCurrentList():void{
-    var tempState:MainState = {
-      currentValue:"",
-      done:[],
-      outstanding:[],
-      isDoneVisible:false,
-      listId:"",
-      showOpenList:false
+  DeleteCurrentList(): void {
+    var tempState: MainState = {
+      currentValue: "",
+      done: [],
+      outstanding: [],
+      isDoneVisible: false,
+      listId: "",
+      showOpenList: false
     };
 
     this.setState(tempState);
@@ -350,7 +376,7 @@ export class MainComponent extends Component<any, MainState> {
       }
       {
         !this.state.showOpenList &&
-        <MainControls onAddExisting={this.ShowAddListDialogue} onDelete={this.DeleteCurrentList} onNew={() => console.log("new")} onSync={()=>this.RefreshList(this.state.listId)} />
+        <MainControls onAddExisting={this.ShowAddListDialogue} onDelete={this.DeleteCurrentList} onNew={() => console.log("new")} onSync={() => this.RefreshList(this.state.listId)} />
       }
     </div>
   }

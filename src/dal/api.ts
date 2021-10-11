@@ -109,8 +109,8 @@ export interface CheckList {
  * @enum {string}
  */
 export enum ItemState {
-    NUMBER_0 = <any> 0,
-    NUMBER_1 = <any> 1
+    NUMBER_0 = <any>0,
+    NUMBER_1 = <any>1
 }
 /**
  * 
@@ -118,7 +118,7 @@ export enum ItemState {
  * @interface ProblemDetails
  */
 // export interface ProblemDetails extends null<String, any> {
-    export interface ProblemDetails {
+export interface ProblemDetails {
     [key: string]: any;
 
 }
@@ -169,11 +169,11 @@ export const ItemsApiFetchParamCreator = function (configuration?: Configuration
         itemsAddItem(body: string, listId: string, options: any = {}): FetchArgs {
             // verify required parameter 'body' is not null or undefined
             if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling itemsAddItem.');
+                throw new RequiredError('body', 'Required parameter body was null or undefined when calling itemsAddItem.');
             }
             // verify required parameter 'listId' is not null or undefined
             if (listId === null || listId === undefined) {
-                throw new RequiredError('listId','Required parameter listId was null or undefined when calling itemsAddItem.');
+                throw new RequiredError('listId', 'Required parameter listId was null or undefined when calling itemsAddItem.');
             }
             const localVarPath = `/api/v1/lists/{listId}/items`
                 .replace(`{${"listId"}}`, encodeURIComponent(String(listId)));
@@ -189,7 +189,7 @@ export const ItemsApiFetchParamCreator = function (configuration?: Configuration
             delete localVarUrlObj.search;
             localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
             const needsSerialization = (<any>"string" !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
-            localVarRequestOptions.body =  needsSerialization ? JSON.stringify(body || {}) : (body || "");
+            localVarRequestOptions.body = needsSerialization ? JSON.stringify(body || {}) : (body || "");
 
             return {
                 url: url.format(localVarUrlObj),
@@ -207,15 +207,15 @@ export const ItemsApiFetchParamCreator = function (configuration?: Configuration
         itemsEditItem(body: string, listId: string, oldItem: string, options: any = {}): FetchArgs {
             // verify required parameter 'body' is not null or undefined
             if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling itemsEditItem.');
+                throw new RequiredError('body', 'Required parameter body was null or undefined when calling itemsEditItem.');
             }
             // verify required parameter 'listId' is not null or undefined
             if (listId === null || listId === undefined) {
-                throw new RequiredError('listId','Required parameter listId was null or undefined when calling itemsEditItem.');
+                throw new RequiredError('listId', 'Required parameter listId was null or undefined when calling itemsEditItem.');
             }
             // verify required parameter 'oldItem' is not null or undefined
             if (oldItem === null || oldItem === undefined) {
-                throw new RequiredError('oldItem','Required parameter oldItem was null or undefined when calling itemsEditItem.');
+                throw new RequiredError('oldItem', 'Required parameter oldItem was null or undefined when calling itemsEditItem.');
             }
             const localVarPath = `/api/v1/lists/{listId}/items/{oldItem}`
                 .replace(`{${"listId"}}`, encodeURIComponent(String(listId)))
@@ -232,7 +232,7 @@ export const ItemsApiFetchParamCreator = function (configuration?: Configuration
             delete localVarUrlObj.search;
             localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
             const needsSerialization = (<any>"string" !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
-            localVarRequestOptions.body =  needsSerialization ? JSON.stringify(body || {}) : (body || "");
+            localVarRequestOptions.body = needsSerialization ? JSON.stringify(body || {}) : (body || "");
 
             return {
                 url: url.format(localVarUrlObj),
@@ -249,11 +249,11 @@ export const ItemsApiFetchParamCreator = function (configuration?: Configuration
         itemsRemoveItem(listId: string, item: string, options: any = {}): FetchArgs {
             // verify required parameter 'listId' is not null or undefined
             if (listId === null || listId === undefined) {
-                throw new RequiredError('listId','Required parameter listId was null or undefined when calling itemsRemoveItem.');
+                throw new RequiredError('listId', 'Required parameter listId was null or undefined when calling itemsRemoveItem.');
             }
             // verify required parameter 'item' is not null or undefined
             if (item === null || item === undefined) {
-                throw new RequiredError('item','Required parameter item was null or undefined when calling itemsRemoveItem.');
+                throw new RequiredError('item', 'Required parameter item was null or undefined when calling itemsRemoveItem.');
             }
             const localVarPath = `/api/v1/lists/{listId}/items/{item}`
                 .replace(`{${"listId"}}`, encodeURIComponent(String(listId)))
@@ -284,15 +284,15 @@ export const ItemsApiFetchParamCreator = function (configuration?: Configuration
         itemsUpdateItem(body: number, listId: string, item: string, options: any = {}): FetchArgs {
             // verify required parameter 'body' is not null or undefined
             if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling itemsUpdateItem.');
+                throw new RequiredError('body', 'Required parameter body was null or undefined when calling itemsUpdateItem.');
             }
             // verify required parameter 'listId' is not null or undefined
             if (listId === null || listId === undefined) {
-                throw new RequiredError('listId','Required parameter listId was null or undefined when calling itemsUpdateItem.');
+                throw new RequiredError('listId', 'Required parameter listId was null or undefined when calling itemsUpdateItem.');
             }
             // verify required parameter 'item' is not null or undefined
             if (item === null || item === undefined) {
-                throw new RequiredError('item','Required parameter item was null or undefined when calling itemsUpdateItem.');
+                throw new RequiredError('item', 'Required parameter item was null or undefined when calling itemsUpdateItem.');
             }
             const localVarPath = `/api/v1/lists/{listId}/items/{item}/state`
                 .replace(`{${"listId"}}`, encodeURIComponent(String(listId)))
@@ -309,7 +309,7 @@ export const ItemsApiFetchParamCreator = function (configuration?: Configuration
             delete localVarUrlObj.search;
             localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
             const needsSerialization = (<any>"number" !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
-            localVarRequestOptions.body =  needsSerialization ? JSON.stringify(body || {}) : (body || "");
+            localVarRequestOptions.body = needsSerialization ? JSON.stringify(body || {}) : (body || "");
 
             return {
                 url: url.format(localVarUrlObj),
@@ -323,7 +323,7 @@ export const ItemsApiFetchParamCreator = function (configuration?: Configuration
  * ItemsApi - functional programming interface
  * @export
  */
-export const ItemsApiFp = function(configuration?: Configuration) {
+export const ItemsApiFp = function (configuration?: Configuration) {
     return {
         /**
          * 
@@ -530,7 +530,7 @@ export const ListsApiFetchParamCreator = function (configuration?: Configuration
         listsCreateList(body: CheckList, options: any = {}): FetchArgs {
             // verify required parameter 'body' is not null or undefined
             if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling listsCreateList.');
+                throw new RequiredError('body', 'Required parameter body was null or undefined when calling listsCreateList.');
             }
             const localVarPath = `/api/v1/Lists`;
             const localVarUrlObj = url.parse(localVarPath, true);
@@ -545,7 +545,7 @@ export const ListsApiFetchParamCreator = function (configuration?: Configuration
             delete localVarUrlObj.search;
             localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
             const needsSerialization = (<any>"CheckList" !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
-            localVarRequestOptions.body =  needsSerialization ? JSON.stringify(body || {}) : (body || "");
+            localVarRequestOptions.body = needsSerialization ? JSON.stringify(body || {}) : (body || "");
 
             return {
                 url: url.format(localVarUrlObj),
@@ -583,7 +583,7 @@ export const ListsApiFetchParamCreator = function (configuration?: Configuration
         listsGetList(listId: string, options: any = {}): FetchArgs {
             // verify required parameter 'listId' is not null or undefined
             if (listId === null || listId === undefined) {
-                throw new RequiredError('listId','Required parameter listId was null or undefined when calling listsGetList.');
+                throw new RequiredError('listId', 'Required parameter listId was null or undefined when calling listsGetList.');
             }
             const localVarPath = `/api/v1/Lists/{listId}`
                 .replace(`{${"listId"}}`, encodeURIComponent(String(listId)));
@@ -602,6 +602,35 @@ export const ListsApiFetchParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
+
+        /**
+         * 
+         * @param {string} listId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listsSubscribeToList(listId: string, messageCallback: any, errorCallback: any, options: any = {}): EventSource {
+            // verify required parameter 'listId' is not null or undefined
+            if (listId === null || listId === undefined) {
+                throw new RequiredError('listId', 'Required parameter listId was null or undefined when calling listsGetList.');
+            }
+            const localVarPath = `/api/v1/Lists/{listId}/events`
+                .replace(`{${"listId"}}`, encodeURIComponent(String(listId)));
+            const localVarUrlObj = url.parse(localVarPath, true);
+            const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+
+            var es = new EventSource(url.format(localVarUrlObj));
+            es.onmessage = messageCallback;
+            es.onerror = errorCallback;
+            return es;
+        },
     }
 };
 
@@ -609,7 +638,7 @@ export const ListsApiFetchParamCreator = function (configuration?: Configuration
  * ListsApi - functional programming interface
  * @export
  */
-export const ListsApiFp = function(configuration?: Configuration) {
+export const ListsApiFp = function (configuration?: Configuration) {
     return {
         /**
          * 
@@ -741,6 +770,36 @@ export class ListsApi extends BaseAPI {
         return ListsApiFp(this.configuration).listsGetList(listId, options)(this.fetch, this.basePath);
     }
 
+    /**
+         * 
+         * @param {string} listId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+     listsSubscribeToList(listId: string, messageCallback: any, errorCallback: any, options: any = {}): EventSource {
+        // verify required parameter 'listId' is not null or undefined
+        if (listId === null || listId === undefined) {
+            throw new RequiredError('listId', 'Required parameter listId was null or undefined when calling listsGetList.');
+        }
+        const localVarPath = `/api/v1/Lists/{listId}/events`
+            .replace(`{${"listId"}}`, encodeURIComponent(String(listId)));
+        
+        // // const localVarUrlObj = url.parse(localVarPath, true);
+        // // const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
+        // // const localVarHeaderParameter = {} as any;
+        // // const localVarQueryParameter = {} as any;
+
+        // // localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+        // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+        // // delete localVarUrlObj.search;
+        // // localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+
+        var es = new EventSource(this.configuration.basePath + localVarPath)
+        es.onmessage = messageCallback;
+        es.onerror = errorCallback;
+        return es;
+    }
+
 }
 /**
  * WeatherForecastApi - fetch parameter creator
@@ -777,7 +836,7 @@ export const WeatherForecastApiFetchParamCreator = function (configuration?: Con
  * WeatherForecastApi - functional programming interface
  * @export
  */
-export const WeatherForecastApiFp = function(configuration?: Configuration) {
+export const WeatherForecastApiFp = function (configuration?: Configuration) {
     return {
         /**
          * 
