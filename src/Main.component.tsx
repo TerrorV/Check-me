@@ -8,7 +8,6 @@ import { CheckList, Configuration, ItemsApi, ListsApi } from "./dal";
 import { couldStartTrivia } from "typescript";
 import MainControls from "./MainControls.component";
 import { AddListComponent } from "./AddList.component";
-import { initSampleWorker } from "./useSampleWorker";
 
 export class MainComponent extends Component<any, MainState> {
   /**
@@ -18,7 +17,6 @@ export class MainComponent extends Component<any, MainState> {
   private state1: MainState;
   private listsRepo: ListsApi;
   private itemsRepo: ItemsApi;
-  private myWorker: Worker;
   private eventHandler: EventSource;
 
 
@@ -60,7 +58,6 @@ export class MainComponent extends Component<any, MainState> {
     var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "[]");
     var listId: string = localStorage.getItem("listId") ?? "";
     // var listRepo = new ListsApi();
-    this.myWorker = new Worker('./dist/worker.js');
     this.eventHandler = new EventSource("");
 
     this.state = {
@@ -71,8 +68,6 @@ export class MainComponent extends Component<any, MainState> {
       listId: listId,
       showOpenList: false
     };
-
-    // this.worker = new Worker(new URL("./worker/ApiSyncWorker",import.meta.url));
 
     //this.setState(props);
   }
@@ -94,13 +89,6 @@ export class MainComponent extends Component<any, MainState> {
       console.log("SSE ERROR!!!");
       console.log(error);
     }
-
-    // // var  sampleWorker = initSampleWorker();
-    // // // sampleWorker.syncList(this.state.listId,this.listsRepo,this.LoadList).catch(e=>console.log(e));
-    // // sampleWorker.syncList(this.state.listId).catch(e=>console.log(e));
-
-    // this.worker.postMessage("asdasd message1");
-
   }
 
   HandleMessage(message: any): void {
