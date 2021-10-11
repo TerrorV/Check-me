@@ -39,8 +39,9 @@ export class MainComponent extends Component<any, MainState> {
     this.HideAddListDialogue = this.HideAddListDialogue.bind(this);
     this.LoadRemoteList = this.LoadRemoteList.bind(this);
     this.DeleteCurrentList = this.DeleteCurrentList.bind(this);
-    this.HandleMessage=this.HandleMessage.bind(this);
-    this.HandleError=this.HandleError.bind(this);
+    this.HandleMessage = this.HandleMessage.bind(this);
+    this.HandleError = this.HandleError.bind(this);
+    this.UpdateItemState = this.UpdateItemState.bind(this);
     this.state1 = this.state;
     console.log(process.env.NODE_ENV);
     console.log(process.env.PUBLIC_URL);
@@ -145,12 +146,21 @@ export class MainComponent extends Component<any, MainState> {
     // this.itemsRepo.itemsUpdateItem(1, this.state.listId, value).
     this.itemsRepo.itemsAddItem(value, this.state.listId).
       then(x => this.RefreshList(this.state.listId)).
-      catch(x => this.itemsRepo.itemsUpdateItem(1, this.state.listId, value).
-        then(x => this.RefreshList(this.state.listId)));
+      catch(x => {
+        console.log("add catch");
+        console.log(this.state.listId);
+        console.log(value);
+        this.UpdateItemState(value,1);
+      });
     // var itemRepo = new ItemsApi();
 
 
     // this.setState(this.state);
+  }
+
+  UpdateItemState(item: string, stateValue: number) {
+    this.itemsRepo.itemsUpdateItem(stateValue, this.state.listId, item).
+      then(x => this.RefreshList(this.state.listId));
   }
 
   RefreshList(listId: string): Promise<CheckList> {
