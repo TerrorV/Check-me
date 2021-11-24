@@ -25,7 +25,7 @@ export class SearchField extends Component<SearchInput, SearchState> {
         }
 
         onChange = (e:React.FormEvent<HTMLInputElement>):void => {
-                console.log(e.currentTarget.value);
+                // console.log(e.currentTarget.value);
                 //this.setState({showList:})
 
                 var state: SearchState = {
@@ -54,8 +54,8 @@ export class SearchField extends Component<SearchInput, SearchState> {
         }
 
         onKeyDown = (e:React.KeyboardEvent):void=>{
-                console.log(e)
-                console.log("Show list:" + this.state.showList)
+                // console.log(e)
+                // console.log("Show list:" + this.state.showList)
                 if (e.key==="Enter") {
                         this.props.onSelect(this.state.searchTerm);
                         this.props.onClose();
@@ -68,10 +68,10 @@ export class SearchField extends Component<SearchInput, SearchState> {
                         this.parent1.setState(state);
                         var searchBox:HTMLInputElement = document.getElementById("search-box") as HTMLInputElement;
                         searchBox.value="";
-                        console.log(searchBox);
+                        // console.log(searchBox);
                 }
 
-                console.log(this.state.searchTerm !== "");
+                // console.log(this.state.searchTerm !== "");
                 //this.setState({showList:this.state.searchTerm !== ""})
         }   
 
@@ -86,7 +86,7 @@ export class SearchField extends Component<SearchInput, SearchState> {
                         <span className="main__search">
                           
                         {
-                                this.state.showList?this.state.state.listItems.filter(x=>x.toLowerCase().includes(this.state.searchTerm.toLowerCase())).map((i)=><ListItem key={i.toString()} input={i} onClick={()=>{console.log("search click");this.props.onSelect(i);this.setState({showList:false})}} />): null
+                                this.state.showList?this.props.listItems.filter(x=>x.toLowerCase().includes(this.state.searchTerm.toLowerCase())).map((i)=><ListItem key={i.toString()} input={i} onClick={()=>{console.log("search click");this.props.onSelect(i);this.setState({showList:false})}} />): null
                         }
                         </span>
                 </div>

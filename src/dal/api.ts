@@ -102,6 +102,12 @@ export interface CheckList {
      * @memberof CheckList
      */
     done?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof CheckList
+     */
+    timestamp: Date;
 }
 /**
  * 

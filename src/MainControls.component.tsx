@@ -1,6 +1,6 @@
 import { AddCircleRounded, CloseRounded, CloudDownload, DeleteRounded, DoneRounded, PostAddRounded, SyncRounded } from '@material-ui/icons';
 import React from 'react';
-import './App.css';
+import './index.css';
 import { MainControlsState } from './MainControlsState';
 
 function MainControls(props:MainControlsState) {

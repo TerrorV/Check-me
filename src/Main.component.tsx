@@ -8,16 +8,19 @@ import { CheckList, Configuration, ItemsApi, ListsApi } from "./dal";
 import { couldStartTrivia } from "typescript";
 import MainControls from "./MainControls.component";
 import { AddListComponent } from "./AddList.component";
+import { PersistenceService } from "./services/PersistenceService";
+import { LocalStorageRepo } from "./dal/LocalStorageRepo";
 
 export class MainComponent extends Component<any, MainState> {
   /**
    *
    */
 
-  private state1: MainState;
-  private listsRepo: ListsApi;
-  private itemsRepo: ItemsApi;
-  private eventHandler: EventSource;
+  // private state1: MainState;
+  // private listsRepo: ListsApi;
+  // private itemsRepo: ItemsApi;
+  private eventHandler: any;
+  private persistenceService: PersistenceService;
 
 
   constructor(props: ListInput) {
@@ -42,7 +45,6 @@ export class MainComponent extends Component<any, MainState> {
     this.HandleMessage = this.HandleMessage.bind(this);
     this.HandleError = this.HandleError.bind(this);
     this.UpdateItemState = this.UpdateItemState.bind(this);
-    this.state1 = this.state;
     console.log(process.env.NODE_ENV);
     console.log(process.env.PUBLIC_URL);
     console.log(process.env.API_HOST);
@@ -50,42 +52,41 @@ export class MainComponent extends Component<any, MainState> {
 
     var config = new Configuration();
     config.basePath = process.env.REACT_APP_API_HOST;
-    this.listsRepo = new ListsApi(config, config.basePath);
-    this.itemsRepo = new ItemsApi(config, config.basePath);
+    // this.listsRepo = new ListsApi(config, config.basePath);
+    // this.itemsRepo = new ItemsApi(config, config.basePath);
+    this.persistenceService = new PersistenceService(
+      new ListsApi(config, config.basePath),
+      new ItemsApi(config, config.basePath),
+      new LocalStorageRepo());
     // indexedDB.open()
     console.log(config);
     console.log(props);
-    var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "[]");
-    var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "[]");
-    var listId: string = localStorage.getItem("listId") ?? "";
+    // var outstanding: string[] = JSON.parse(localStorage.getItem("Outstanding") ?? "[]");
+    // var done: string[] = JSON.parse(localStorage.getItem("Done") ?? "[]");
+    // var listId: string = localStorage.getItem("listId") ?? "";
     // var listRepo = new ListsApi();
-    this.eventHandler = new EventSource("");
+    this.eventHandler = null;
 
-    this.state = {
-      done: done,
-      outstanding: outstanding,
-      isDoneVisible: true,
-      currentValue: "",
-      listId: listId,
-      showOpenList: false
-    };
+    this.state = {isDoneVisible:true,currentValue:"",listId:"",showOpenList:false,outstanding:[],done:[]};
 
     //this.setState(props);
   }
 
-  componentDidMount() {
-
+  async componentDidMount() {
     console.log("Did mount");
-    if (this.state.listId === "") {
-      this.CreateNewList("00000000-0000-0000-0000-000000000000", this.state.outstanding, this.state.done);
-    } else {
-      this.listsRepo.listsGetList(this.state.listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
-      //this.listsRepo.listsGetList(this.state.listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
 
-    }
-
+    var list = await this.persistenceService.InitList();
+    // var sss = new MainStateImpl();
+    // sss.listId="254aff23-20dd-4438-a07c-1569d28eb70e";
+    // sss.outstanding = ["asd","Qwe","poi","asd1"];
+    
+    // this.setState({listId:"254aff23-20dd-4438-a07c-1569d28eb70e"});
+    // this.setState({outstanding:["asd","Qwe","poi","asd1"]},()=>console.log(this.state));
+    this.SetListAsState(list);
     try {
-      this.eventHandler = this.listsRepo.listsSubscribeToList(this.state.listId, this.HandleMessage, this.HandleError);
+      // this.eventHandler = this.persistenceService.SubscribeToList(this.state.listId, this.HandleMessage, this.HandleError);
+      // this.eventHandler = this.persistenceService.SubscribeToList(list.id, this.HandleMessage, this.HandleError);
+      // // this.eventHandler = this.listsRepo.listsSubscribeToList(this.state.listId, this.HandleMessage, this.HandleError);
     } catch (error) {
       console.log("SSE ERROR!!!");
       console.log(error);
@@ -93,7 +94,7 @@ export class MainComponent extends Component<any, MainState> {
   }
 
   HandleMessage(message: any): void {
-    if (message.data == 'ping') {
+    if (message.data === 'ping') {
       return;
     }
 
@@ -102,7 +103,9 @@ export class MainComponent extends Component<any, MainState> {
   }
 
   HandleError(message: any): void {
+    console.trace(message);
     console.log(message);
+    console.log(message.stack);
   }
 
   ItemSelected(value: string) {
@@ -121,70 +124,102 @@ export class MainComponent extends Component<any, MainState> {
   SearchClosed(): void {
     var tempState: MainState = this.state;
     tempState.isDoneVisible = true;
-    this.setState(tempState);
+    this.setState(tempState,()=>console.log(this.state));
   }
 
   SearchOpened(): void {
     var tempState: MainState = this.state;
     tempState.isDoneVisible = false;
-    console.log(this.setState);
-    this.setState(tempState);
+    // console.log(this.setState);
+    this.setState(tempState,()=>console.log(this.state));
   }
 
-  AddItem(value: string) {
+  async AddItem(value: string) {
     console.log("addd item")
-    if (!this.state.outstanding.includes(value)) {
-      this.state.outstanding.push(value);
+    if (!await this.persistenceService.AddItem(value, this.state.listId)) {
+      this.persistenceService.MoveToOutstanding(value, this.state.listId);
     }
 
-    if (this.state.done.includes(value)) {
-      this.state.done.splice(this.state.done.indexOf(value), 1);
-    }
+    await this.SetState();
+    // if (!this.state.outstanding.includes(value)) {
+    //   this.state.outstanding.push(value);
+    // }
 
-    this.setState(this.state);
-    this.PersistState(this.state);
+    // if (this.state.done.includes(value)) {
+    //   this.state.done.splice(this.state.done.indexOf(value), 1);
+    // }
+
+    //this.PersistState(this.state);
     // this.itemsRepo.itemsUpdateItem(1, this.state.listId, value).
-    this.itemsRepo.itemsAddItem(value, this.state.listId).
-      then(x => this.RefreshList(this.state.listId)).
-      catch(x => {
-        console.log("add catch");
-        console.log(this.state.listId);
-        console.log(value);
-        this.UpdateItemState(value,1);
-      });
+    // this.itemsRepo.itemsAddItem(value, this.state.listId).
+    //   then(x => this.RefreshList(this.state.listId)).
+    //   catch(x => {
+    //     console.log("add catch");
+    //     console.log(this.state.listId);
+    //     console.log(value);
+    //     this.UpdateItemState(value, 1);
+    //   });
     // var itemRepo = new ItemsApi();
 
 
     // this.setState(this.state);
   }
 
+  private async SetState() {
+    var list: CheckList = await this.persistenceService.GetCurrentList();
+    this.SetListAsState(list);
+  }
+
+  private async SetListAsState(list: CheckList) {
+    var tempState: MainState = { outstanding: list.outstanding ?? [], done: list.done ?? [], currentValue: this.state.currentValue, isDoneVisible: this.state.isDoneVisible, listId: list.id, showOpenList: this.state.showOpenList };
+    this.setState(tempState,()=>console.log(this.state));
+  }
+
   UpdateItemState(item: string, stateValue: number) {
-    this.itemsRepo.itemsUpdateItem(stateValue, this.state.listId, item).
-      then(x => this.RefreshList(this.state.listId));
+    if (stateValue === 1) {
+      this.persistenceService.MoveToOutstanding(item, this.state.listId);
+    } else {
+      this.persistenceService.MoveToDone(item, this.state.listId);
+    }
+
+    // this.itemsRepo.itemsUpdateItem(stateValue, this.state.listId, item).
+    //   then(x => this.RefreshList(this.state.listId)).catch(this.HandleError);
   }
 
-  RefreshList(listId: string): Promise<CheckList> {
+  async RefreshList(listId: string): Promise<CheckList> {
     //  var listRepo = new ListsApi()
-    return this.listsRepo.listsGetList(listId).then(x => this.LoadList(x));
+    var list;
+    try {
+      list = await this.persistenceService.GetList(listId);
+      this.LoadList(list);
+
+    } catch (error) {
+      this.HandleError(error);
+      throw error;
+    }
+    // return this.listsRepo.listsGetList(listId).then(x => this.LoadList(x)).catch(this.HandleError);
     // throw new Error("Method not implemented.");
+    return list;
   }
 
-  UpdateItem(oldValue: string, newValue: string) {
-    console.log(oldValue + "|" + newValue)
-    if (this.state.outstanding.includes(oldValue)) {
-      this.state.outstanding[this.state.outstanding.indexOf(oldValue)] = newValue;
-    }
+  async UpdateItem(oldValue: string, newValue: string) {
+    console.log(oldValue + "|" + newValue);
+    await this.persistenceService.EditItem(oldValue, newValue, this.state.listId);
 
-    if (this.state.done.includes(oldValue)) {
-      this.state.done[this.state.done.indexOf(oldValue)] = newValue;
-    }
+    await this.SetState();
+    // if (this.state.outstanding.includes(oldValue)) {
+    //   this.state.outstanding[this.state.outstanding.indexOf(oldValue)] = newValue;
+    // }
 
-    this.setState(this.state);
+    // if (this.state.done.includes(oldValue)) {
+    //   this.state.done[this.state.done.indexOf(oldValue)] = newValue;
+    // }
+
     //this.RefreshList(this.state.listId);
     // var itemRepo = new ItemsApi();
-    this.itemsRepo.itemsEditItem(newValue, this.state.listId, oldValue).then(x => this.RefreshList(this.state.listId));
+    // this.itemsRepo.itemsEditItem(newValue, this.state.listId, oldValue).then(x => this.RefreshList(this.state.listId)).catch(this.HandleError);
 
-    this.PersistState(this.state);
+    // this.PersistState(this.state);
 
     //this.setState(this.state);
 
@@ -201,52 +236,60 @@ export class MainComponent extends Component<any, MainState> {
       showOpenList: this.state.showOpenList
     }
 
-    this.setState(this.state);
+    this.setState(this.state,()=>console.log(this.state));
   }
 
   PersistState(appState: MainState): void {
     console.log(appState);
-    localStorage.setItem("Outstanding", JSON.stringify(appState.outstanding));
-    localStorage.setItem("Done", JSON.stringify(appState.done));
-    localStorage.setItem("listId", appState.listId);
+    throw new Error("DEPRECATED! NOT IN USE!!!");
+
+    // localStorage.setItem("Outstanding", JSON.stringify(appState.outstanding));
+    // localStorage.setItem("Done", JSON.stringify(appState.done));
+    // localStorage.setItem("listId", appState.listId);
   }
 
   RemoveItem(value: string) {
     console.log("remove");
-    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: this.state.currentValue, listId: this.state.listId, showOpenList: this.state.showOpenList };
-    if (!tempState.done.includes(value)) {
-      tempState.done.push(value);
-      tempState.outstanding.splice(tempState.outstanding.indexOf(value), 1);
-      this.setState(tempState);
-    }
 
-    this.setState(tempState);
-    this.PersistState(tempState);
-    this.itemsRepo.itemsUpdateItem(2, this.state.listId, value).then(x => this.RefreshList(this.state.listId));
-    // this.RefreshList(this.state.listId).then(() => {
+    this.persistenceService.MoveToDone(value, this.state.listId);
+
+    this.SetState();
+    // const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: this.state.currentValue, listId: this.state.listId, showOpenList: this.state.showOpenList };
+    // if (!tempState.done.includes(value)) {
+    //   tempState.done.push(value);
+    //   tempState.outstanding.splice(tempState.outstanding.indexOf(value), 1);
+    //   this.setState(tempState);
+    // }
+
+    // this.setState(tempState);
+    // this.PersistState(tempState);
+    // this.itemsRepo.itemsUpdateItem(2, this.state.listId, value).then(x => this.RefreshList(this.state.listId)).catch(this.HandleError);
+    // // this.RefreshList(this.state.listId).then(() => {
 
     // }).then(() => this.itemsRepo.itemsUpdateItem(2, this.state.listId, value).catch(e => console.log(e)));
   }
 
-  DeleteItem(value: string) {
-    const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: this.state.currentValue, listId: this.state.listId, showOpenList: this.state.showOpenList };
+  async DeleteItem(value: string) {
+    // const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: this.state.currentValue, listId: this.state.listId, showOpenList: this.state.showOpenList };
 
-    if (tempState.outstanding.includes(value)) {
-      tempState.outstanding.splice(tempState.outstanding.indexOf(value), 1);
-    } else {
-      tempState.done.splice(tempState.done.indexOf(value), 1);
-    }
-    this.setState(tempState);
-    this.PersistState(tempState);
-    this.itemsRepo.itemsRemoveItem(this.state.listId, value).then(x => this.RefreshList(this.state.listId));
+    // if (tempState.outstanding.includes(value)) {
+    //   tempState.outstanding.splice(tempState.outstanding.indexOf(value), 1);
+    // } else {
+    //   tempState.done.splice(tempState.done.indexOf(value), 1);
+    // }
+    // this.setState(tempState);
+    // this.PersistState(tempState);
+    // this.itemsRepo.itemsRemoveItem(this.state.listId, value).then(x => this.RefreshList(this.state.listId)).catch(this.HandleError);
 
+    await this.persistenceService.DeleteItem(value, this.state.listId);
+    this.SetState();
     this.CancelEdit();
   }
 
   EditItem(value: string) {
     console.log(value);
     const tempState: MainState = { outstanding: this.state.outstanding, done: this.state.done, isDoneVisible: this.state.isDoneVisible, currentValue: value, listId: this.state.listId, showOpenList: this.state.showOpenList };
-    this.setState(tempState);
+    this.setState(tempState,()=>console.log(this.state));
   }
 
   ItemClick = (e: any, value: string) => {
@@ -282,7 +325,7 @@ export class MainComponent extends Component<any, MainState> {
     tempState.isDoneVisible = true;
     tempState.listId = list.id;
 
-    this.setState(tempState);
+    this.setState(tempState,()=>console.log(this.state));
     console.log("LoadList");
     console.log(list);
     console.log(this.state);
@@ -296,25 +339,28 @@ export class MainComponent extends Component<any, MainState> {
   ShowAddListDialogue(): void {
     var tempState: MainState = this.state;
     tempState.showOpenList = true;
-    this.setState(tempState);
+    this.setState(tempState,()=>console.log(this.state));
   }
   HideAddListDialogue(): void {
     var tempState: MainState = this.state;
     tempState.showOpenList = false;
-    this.setState(tempState);
+    this.setState(tempState,()=>console.log(this.state));
   }
 
-  LoadRemoteList(listId: string): void {
+  async LoadRemoteList(listId: string): Promise<void> {
     console.log(listId);
     if (listId === "") {
       return;
     }
 
-    this.listsRepo.listsGetList(listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
+    this.persistenceService.GetList(listId);
+
+    await this.SetState();
+    // this.listsRepo.listsGetList(listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
     //this.listsRepo.listsGetList(this.state.listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
   }
 
-  DeleteCurrentList(): void {
+  async DeleteCurrentList(): Promise<void> {
     var tempState: MainState = {
       currentValue: "",
       done: [],
@@ -324,34 +370,35 @@ export class MainComponent extends Component<any, MainState> {
       showOpenList: false
     };
 
-    this.setState(tempState);
-    this.PersistState(tempState);
+    await this.persistenceService.CreateNewList({ outstanding: [], done: [], id: "", timestamp: new Date() });
+
+    this.SetState();
+    // this.setState(tempState);
+    // this.PersistState(tempState);
   }
 
-  CreateNewList(listId: string, outstanding: string[], done: string[]): any {
+  async CreateNewList(listId: string, outstanding: string[], done: string[]): Promise<any> {
     // var listRepo = new ListsApi();
-    this.listsRepo.listsCreateList({ outstanding: outstanding, done: done, id: listId }).then(x => {
-      var tempState: MainState = {
-        done: done,
-        outstanding: outstanding,
-        isDoneVisible: true,
-        currentValue: "",
-        listId: x.id,
-        showOpenList: false
-      };
-      this.setState(tempState);
-      this.PersistState(tempState);
-    });
+    var list = await this.persistenceService.CreateNewList({ outstanding: outstanding, done: done, id: listId,timestamp: new Date() });
+    this.SetState();
+    // this.listsRepo.listsCreateList({ outstanding: outstanding, done: done, id: listId }).then(x => {
+    //   var tempState: MainState = {
+    //     done: done,
+    //     outstanding: outstanding,
+    //     isDoneVisible: true,
+    //     currentValue: "",
+    //     listId: x.id,
+    //     showOpenList: false
+    //   };
+    //   this.setState(tempState);
+    //   this.PersistState(tempState);
+    // }).catch(this.HandleError);
     // throw new Error("Function not implemented.");
   }
 
   render() {
     //const mystyle = { textDecoration: "line-through" };
     return <div className="main">
-
-      <p></p>
-      {/* <ListComponent listItems={items}></ListComponent> */}
-      {/* <ListComponent listItems={items}></ListComponent> */}
       <span>
         {
           this.state.showOpenList &&
@@ -363,11 +410,8 @@ export class MainComponent extends Component<any, MainState> {
         {
           this.state.currentValue !== "" && !this.state.showOpenList &&
           <EditItemComponent value={this.state.currentValue} onCancel={() => this.CancelEdit()} onDelete={() => this.DeleteItem(this.state.currentValue)} onUpdate={(newValue) => this.UpdateItem(this.state.currentValue, newValue)} ></EditItemComponent>
-
         }
       </span>
-
-      {/* <ListItem input="hhbvggg"/> */}
       {
         this.state.currentValue === "" && !this.state.showOpenList &&
         <span className="main__display_section">
