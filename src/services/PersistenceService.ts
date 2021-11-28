@@ -1,4 +1,4 @@
-import { CheckList, ItemsApi, ListsApi } from "../dal/api";
+import { CheckList, ItemsApi, ItemState, ListsApi } from "../dal/api";
 import { LocalStorageRepo } from "../dal/LocalStorageRepo";
 
 export class PersistenceService {
@@ -30,6 +30,7 @@ export class PersistenceService {
                     list = tempList;
                 } else {
                     list = this.MergeLists(list, tempList);
+                    this.listsRepo.listsUpdateList(list.id,list);
                 }
             } catch (error) {
 
@@ -57,7 +58,7 @@ export class PersistenceService {
     }
 
     SubscribeToList(listId: string, handleMessage: (message: any) => void, handleError: (message: any) => void): EventSource {
-        return this.listsRepo.listsSubscribeToList(listId, handleMessage, handleError);
+        return this.listsSubscribeToList(listId, handleMessage, handleError);
     }
 
     async GetCurrentList(): Promise<CheckList> {
@@ -74,7 +75,7 @@ export class PersistenceService {
     }
 
     async MoveToOutstanding(value: string, listId: string): Promise<boolean> {
-        this.itemsRepo.itemsUpdateItem(1, listId, value).catch(this.HandleError);
+        this.itemsRepo.itemsUpdateItem(listId, value, ItemState.NUMBER_1).catch(this.HandleError);
         return this.localRepo.MakeOutstanding(value);
     }
 
@@ -84,7 +85,7 @@ export class PersistenceService {
     }
 
     async MoveToDone(value: string, listId: string) {
-        this.itemsRepo.itemsUpdateItem(2, listId, value).catch(this.HandleError);
+        this.itemsRepo.itemsUpdateItem(listId, value,ItemState.NUMBER_2).catch(this.HandleError);
         return this.localRepo.MakeDone(value);
     }
 
@@ -137,6 +138,36 @@ export class PersistenceService {
         });
 
         return temp;
+    }
+
+     /**
+         * 
+         * @param {string} listId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+      listsSubscribeToList(listId: string, messageCallback: any, errorCallback: any, options: any = {}): EventSource {
+        // verify required parameter 'listId' is not null or undefined
+        if (listId === null || listId === undefined) {
+            throw new Error('Required parameter listId was null or undefined when calling listsGetList.');
+        }
+        const localVarPath = `/api/v1/Lists/{listId}/events`
+            .replace(`{${"listId"}}`, encodeURIComponent(String(listId)));
+        
+        // // const localVarUrlObj = url.parse(localVarPath, true);
+        // // const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
+        // // const localVarHeaderParameter = {} as any;
+        // // const localVarQueryParameter = {} as any;
+
+        // // localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+        // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+        // // delete localVarUrlObj.search;
+        // // localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+
+        var es = new EventSource(process.env.REACT_APP_API_HOST + localVarPath)
+        es.onmessage = messageCallback;
+        es.onerror = errorCallback;
+        return es;
     }
 
 }
