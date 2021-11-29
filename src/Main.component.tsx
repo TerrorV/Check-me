@@ -85,7 +85,7 @@ export class MainComponent extends Component<any, MainState> {
     this.SetListAsState(list);
     try {
       // this.eventHandler = this.persistenceService.SubscribeToList(this.state.listId, this.HandleMessage, this.HandleError);
-      // this.eventHandler = this.persistenceService.SubscribeToList(list.id, this.HandleMessage, this.HandleError);
+      this.eventHandler = this.persistenceService.SubscribeToList(list.id, this.HandleMessage, this.HandleError);
       // // this.eventHandler = this.listsRepo.listsSubscribeToList(this.state.listId, this.HandleMessage, this.HandleError);
     } catch (error) {
       console.log("SSE ERROR!!!");
