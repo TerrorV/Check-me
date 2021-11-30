@@ -80,7 +80,7 @@ export class PersistenceService {
     }
 
     async AddItem(value: string, listId: string): Promise<boolean> {
-        this.itemsRepo.itemsAddItem(value, listId).catch(this.HandleError);
+        this.itemsRepo.itemsAddItem(listId, value).catch(this.HandleError);
         return this.localRepo.AddItem(value);
     }
 
@@ -95,7 +95,7 @@ export class PersistenceService {
     }
 
     async EditItem(oldValue: string, newValue: string, listId: string) {
-        this.itemsRepo.itemsEditItem(newValue, listId, oldValue);
+        this.itemsRepo.itemsEditItem( listId, oldValue, newValue);
         this.localRepo.EditItem(oldValue, newValue);
     }
 
