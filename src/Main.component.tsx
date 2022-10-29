@@ -81,6 +81,7 @@ export class MainComponent extends Component<any, MainState> {
     }
 
     var  sampleWorker = initSampleWorker();
+    console.log(sampleWorker);
     // sampleWorker.syncList(this.state.listId,this.listsRepo,this.LoadList).catch(e=>console.log(e));
     sampleWorker.syncList(this.state.listId).catch(e=>console.log(e));
 
