@@ -25,16 +25,22 @@ export class PersistenceService {
             // this.CreateNewList("00000000-0000-0000-0000-000000000000", list.outstanding, list.done);
         } else {
             try {
+                this.listsRepo.listsUpdateList(list.id,list);
                 var tempList = await this.listsRepo.listsGetList(list.id);
-                if (tempList.timestamp > list.timestamp) {
-                    list = tempList;
-                } else {
-                    list = this.MergeLists(list, tempList);
-                    this.listsRepo.listsUpdateList(list.id,list);
-                }
-            } catch (error) {
+                
+                // if (tempList.timestamp > list.timestamp) {
+                //     list = tempList;
+                // } else {
+                //     tempList = this.MergeLists(list, tempList);
+                //     list=tempList;
+                //     this.listsRepo.listsUpdateList(list.id,tempList);
+                // }
 
+               this.localRepo.SaveList(tempList);
+            } catch (error) {
+                console.log(error);
             }
+
         }
 
         return list
@@ -50,7 +56,8 @@ export class PersistenceService {
                 });
 
             this.localRepo.SaveList(list);
-        } catch {
+        } catch(ex) {
+            console.log(ex);
             this.localRepo.SaveList(list);
         }
 
@@ -75,7 +82,7 @@ export class PersistenceService {
     }
 
     async MoveToOutstanding(value: string, listId: string): Promise<boolean> {
-        this.itemsRepo.itemsUpdateItem(listId, value, ItemState.NUMBER_1).catch(this.HandleError);
+        this.itemsRepo.itemsUpdateItem(listId, value, ItemState.NUMBER_1).catch(()=>this.AddItem(value,listId));
         return this.localRepo.MakeOutstanding(value);
     }
 

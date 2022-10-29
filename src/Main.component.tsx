@@ -95,11 +95,13 @@ export class MainComponent extends Component<any, MainState> {
 
   HandleMessage(message: any): void {
     if (message.data === 'ping') {
+      console.log("ping");
       return;
     }
 
-    this.LoadList(JSON.parse(message.data));
+    console.log("New message has arrived!");
     console.log(message.data);
+    this.LoadList(JSON.parse(message.data));
   }
 
   HandleError(message: any): void {
@@ -164,7 +166,7 @@ export class MainComponent extends Component<any, MainState> {
 
     // this.setState(this.state);
   }
-
+  
   private async SetState() {
     var list: CheckList = await this.persistenceService.GetCurrentList();
     this.SetListAsState(list);
@@ -353,9 +355,10 @@ export class MainComponent extends Component<any, MainState> {
       return;
     }
 
-    this.persistenceService.GetList(listId);
-
-    await this.SetState();
+    this.HideAddListDialogue();
+    await this.persistenceService.GetList(listId).then(x=>this.SetState()).then(x=>{
+      this.eventHandler = this.persistenceService.SubscribeToList(listId, this.HandleMessage, this.HandleError);
+    });
     // this.listsRepo.listsGetList(listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
     //this.listsRepo.listsGetList(this.state.listId).then(x => this.LoadList(x)).catch(e => this.CreateNewList(this.state.listId, this.state.outstanding, this.state.done));
   }

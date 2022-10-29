@@ -93,6 +93,7 @@ export class LocalStorageRepo {
         // this.list.outstanding = list.outstanding ?? [];
         // this.list.done = list.done ?? [];
         // this.list.id = list.id;
+        debugger;
         this.list = list;
         this.PersistState();
 
