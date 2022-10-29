@@ -1,0 +1,493 @@
+{
+  "x-generator": "NSwag v13.11.3.0 (NJsonSchema v10.4.4.0 (Newtonsoft.Json v9.0.0.0))",
+  "swagger": "2.0",
+  "info": {
+    "title": "My Title",
+    "version": "1.0.0"
+  },
+  "host": "checkme-app-api.azurewebsites.net",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/api/v1/lists/{listId}/items/{item}/state": {
+      "put": {
+        "tags": [
+          "Items"
+        ],
+        "operationId": "Items_UpdateItem",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "listId",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "item",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          },
+          {
+            "name": "state",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ItemState"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": true,
+            "description": "",
+            "schema": {
+              "type": "file"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lists/{listId}/items/{item}": {
+      "delete": {
+        "tags": [
+          "Items"
+        ],
+        "operationId": "Items_RemoveItem",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "listId",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "item",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": true,
+            "description": "",
+            "schema": {
+              "type": "file"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lists/{listId}/items/{oldItem}": {
+      "put": {
+        "tags": [
+          "Items"
+        ],
+        "operationId": "Items_EditItem",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "listId",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "oldItem",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          },
+          {
+            "name": "newItem",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": true,
+            "description": "",
+            "schema": {
+              "type": "file"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lists/{listId}/items": {
+      "post": {
+        "tags": [
+          "Items"
+        ],
+        "operationId": "Items_AddItem",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "listId",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "name": "item",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": true,
+            "description": "",
+            "schema": {
+              "type": "file"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Lists/{listId}/events": {
+      "get": {
+        "tags": [
+          "Lists"
+        ],
+        "operationId": "Lists_GetListEvents",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "listId",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CheckList"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Lists/{listId}": {
+      "get": {
+        "tags": [
+          "Lists"
+        ],
+        "operationId": "Lists_GetList",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "listId",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "timestamp",
+            "in": "query",
+            "format": "date-time",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CheckList"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Lists"
+        ],
+        "operationId": "Lists_UpdateList",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "listId",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "name": "list",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckList"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "202": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CheckList"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Lists": {
+      "get": {
+        "tags": [
+          "Lists"
+        ],
+        "operationId": "Lists_GetAllList",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CheckList"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Lists"
+        ],
+        "operationId": "Lists_CreateList",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "list",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckList"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "201": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CheckList"
+            }
+          }
+        }
+      }
+    },
+    "/WeatherForecast": {
+      "get": {
+        "tags": [
+          "WeatherForecast"
+        ],
+        "operationId": "WeatherForecast_Get",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WeatherForecast"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ItemState": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Outstanding",
+        "Done"
+      ],
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "CheckList": {
+      "type": "object",
+      "required": [
+        "id",
+        "timestamp"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "outstanding": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "done": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ProblemDetails": {
+      "type": "object",
+      "additionalProperties": {},
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "instance": {
+          "type": "string"
+        }
+      }
+    },
+    "WeatherForecast": {
+      "type": "object",
+      "required": [
+        "date",
+        "temperatureC",
+        "temperatureF"
+      ],
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "temperatureC": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "temperatureF": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
