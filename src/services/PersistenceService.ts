@@ -82,7 +82,7 @@ export class PersistenceService {
     }
 
     async MoveToOutstanding(value: string, listId: string): Promise<boolean> {
-        this.itemsRepo.itemsUpdateItem(listId, value, ItemState.NUMBER_1).catch(()=>this.AddItem(value,listId));
+        this.itemsRepo.itemsUpdateItem(listId, value, ItemState.NUMBER_1).catch((ex)=>{this.AddItem(value,listId);this.HandleError(ex)});
         return this.localRepo.MakeOutstanding(value);
     }
 
