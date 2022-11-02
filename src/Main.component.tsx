@@ -138,9 +138,10 @@ export class MainComponent extends Component<any, MainState> {
 
   async AddItem(value: string) {
     console.log("addd item")
-    if (!await this.persistenceService.AddItem(value, this.state.listId)) {
-      this.persistenceService.MoveToOutstanding(value, this.state.listId);
-    }
+    this.persistenceService.MoveToOutstanding(value, this.state.listId);
+    // // if (!await this.persistenceService.AddItem(value, this.state.listId)) {
+    // //   this.persistenceService.MoveToOutstanding(value, this.state.listId);
+    // // }
 
     await this.SetState();
     // if (!this.state.outstanding.includes(value)) {
